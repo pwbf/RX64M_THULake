@@ -31,15 +31,6 @@ Includes <System Includes> , "Project Includes"
 #include <stdbool.h>
 
 
-
-#if ETHERNET_FUNCTION_ENABLE
-
-/*For Ethernet*/
-#include "r_t4_itcpip.h"
-#include "r_sys_time_rx_if.h"
-#include "echo_srv_sample.h"
-#endif
-
 /*For SCI*/
 #include "r_sci_rx_if.h"        // The SCI module API interface file.
 #include "r_byteq_if.h"         // The BYTEQ module API interface file.
@@ -55,22 +46,6 @@ Includes <System Includes> , "Project Includes"
 // void sensorRead(uint8_t status);
 
 /******************************************************************************
-Macro definitions
-******************************************************************************/
-#if ETHERNET_FUNCTION_ENABLE
-#if (APPLICATION_T4_CHANNEL_NUM  == (2))
-#define T4_WORK_SIZE (9112)  /* Maximum size used in echo server sample program */
-#elif (APPLICATION_T4_CHANNEL_NUM == (1))
-#define T4_WORK_SIZE (4412)  /* Maximum size used in echo server sample program */
-#endif
-#endif
-
-/******************************************************************************
-Imported global variables and functions (from other files)
-******************************************************************************/
-extern void echo_srv(void);
-
-/******************************************************************************
 Exported global variables and functions (to be accessed by other files)
 ******************************************************************************/
 void main(void);
@@ -82,9 +57,6 @@ void MyCallback(void *pArgs);   	/*For ADC*/
 /******************************************************************************
 Private global variables and functions
 ******************************************************************************/
-#if ETHERNET_FUNCTION_ENABLE
-static UW tcpudp_work[T4_WORK_SIZE / 4 + 1];
-#endif
 
 /*For UART.Begin*/
 void my_sci_callback_ch1(void *pArgs);
