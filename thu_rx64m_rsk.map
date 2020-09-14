@@ -1,0 +1,115 @@
+Renesas Optimizing Linker (W3.01.00 )             26-Mar-2020 14:45:01
+
+*** Options ***
+
+-subcommand=D:\RX64M\LAB\thu_rx64m_rsk_LoRaWAN\HardwareDebug\thu_rx64m_rsk.clnk
+-library=thu_rx64m_rsk.lib
+-input=HardwareDebug\dbsct.obj
+-input=HardwareDebug\hwsetup.obj
+-input=HardwareDebug\lowlvl.obj
+-input=HardwareDebug\lowsrc.obj
+-input=HardwareDebug\resetprg.obj
+-input=HardwareDebug\sbrk.obj
+-input=HardwareDebug\vecttbl.obj
+-input=HardwareDebug\r_bsp_common.obj
+-input=HardwareDebug\cpu.obj
+-input=HardwareDebug\locking.obj
+-input=HardwareDebug\mcu_clocks.obj
+-input=HardwareDebug\mcu_init.obj
+-input=HardwareDebug\mcu_interrupts.obj
+-input=HardwareDebug\mcu_locks.obj
+-input=HardwareDebug\mcu_mapped_interrupts.obj
+-input=HardwareDebug\r_cmt_rx.obj
+-input=HardwareDebug\phy.obj
+-input=HardwareDebug\r_ether_rx.obj
+-input=HardwareDebug\r_ether_setting_rx64m.obj
+-input=HardwareDebug\r_pinset.obj
+-input=HardwareDebug\r_sys_time_rx.obj
+-input=HardwareDebug\ether_callback.obj
+-input=HardwareDebug\t4_driver.obj
+-input=HardwareDebug\timer.obj
+-input=HardwareDebug\main.obj
+-input=HardwareDebug\echo_srv.obj
+-input=HardwareDebug\config_tcpudp.obj
+-input=HardwareDebug\r_sci_rx.obj
+-input=HardwareDebug\r_sci_rx64m.obj
+-input=HardwareDebug\r_sci_rx64m_data.obj
+-input=HardwareDebug\r_byteq.obj
+-input=HardwareDebug\r_s12ad_rx.obj
+-input=HardwareDebug\r_s12ad_rx63x.obj
+-input=HardwareDebug\r_s12ad_rx64m.obj
+-input=HardwareDebug\r_s12ad_rx65x.obj
+-library=r_t4_rx\lib\T4_Library_rxv1_ether_little.lib
+-noprelink
+-output=thu_rx64m_rsk.abs
+-vect=_undefined_interrupt_source_isr
+-list=thu_rx64m_rsk.map
+-start=B_ETHERNET_BUFFERS_1,B_RX_DESC_1,B_TX_DESC_1,SU,SI,B_1,R_1,B_2,R_2,B,R/0100,C_1,C_2,C,C$*,D*,W*,L,P*/0FFC00000,EXCEPTVECT/0FFFFFF80,RESETVECT/0FFFFFFFC
+-rom=D=R,D_1=R_1,D_2=R_2
+-end
+
+*** Error information ***
+
+*** Mapping List ***
+
+SECTION                            START      END         SIZE   ALIGN
+B_ETHERNET_BUFFERS_1
+                                  00000100  000018ff      1800   1
+B_RX_DESC_1
+                                  00001900  0000191f        20   1
+B_TX_DESC_1
+                                  00001920  0000193f        20   1
+SU
+                                  00001940  0000293f      1000   4
+SI
+                                  00002940  0000313f       800   4
+B_1
+                                  00003140  000032e0       1a1   1
+R_1
+                                  000032e1  000033af        cf   1
+B_2
+                                  000033b0  0000340b        5c   2
+R_2
+                                  0000340c  0000340c         0   1
+B
+                                  0000340c  00005687      227c   4
+R
+                                  00005688  00005993       30c   4
+$ADDR_C_120040
+                                  00120040  00120043         4   1
+$ADDR_C_120048
+                                  00120048  0012004b         4   1
+$ADDR_C_120050
+                                  00120050  0012006f        20   1
+C_1
+                                  ffc00000  ffc001d9       1da   1
+C_2
+                                  ffc001da  ffc00431       258   2
+C
+                                  ffc00434  ffc00d83       950   4
+C$DSEC
+                                  ffc00d84  ffc00da7        24   4
+C$BSEC
+                                  ffc00da8  ffc00dbf        18   4
+C$VECT
+                                  ffc00dc0  ffc011bf       400   4
+D
+                                  ffc011c0  ffc014cb       30c   4
+D_1
+                                  ffc014cc  ffc0159a        cf   1
+D_2
+                                  ffc0159b  ffc0159b         0   1
+W
+                                  ffc0159c  ffc0159c         0   4
+W_1
+                                  ffc0159c  ffc0159c         0   1
+W_2
+                                  ffc0159c  ffc015bb        20   2
+L
+                                  ffc015bc  ffc01abc       501   4
+P
+                                  ffc01abd  ffc0e594      cad8   1
+EXCEPTVECT
+                                  ffffff80  fffffffb        7c   4
+RESETVECT
+                                  fffffffc  ffffffff         4   4

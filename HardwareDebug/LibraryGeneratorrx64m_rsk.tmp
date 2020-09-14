@@ -1,0 +1,5 @@
+-isa=rxv2
+-fpu
+-lang=c99
+-head=runtime,stdio,stdlib,string,new
+-output="rx64m_rsk.lib"
