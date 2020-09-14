@@ -82,8 +82,6 @@ void main(void);
 void init_mtu0(void);   			/*For ADC*/
 void MyCallback(void *pArgs);   	/*For ADC*/
 
-// uint8_t HLbyte(uint8_t HIGH, uint8_t LOW);
-
 /******************************************************************************
 Private global variables and functions
 ******************************************************************************/
@@ -144,15 +142,18 @@ float global_env_humi_adj=0;			//adjust enviroment humidity
 float global_env_illu_adj=0;			//adjust enviroment illumination
 
 uint8_t bt_str_send[24];
-uint8_t f1t[4]={'0','0','.','0'};			//10 Field 1 temperature value			[xx.x]
-uint8_t f1h[3]={'0','0','0'};				//11 Field 1 humidity value				[xxx]
-uint8_t f1p[4]={'0','0','.','0'};			//12 Field 1 ph value					[xx.x]
-uint8_t evt[4]={'0','0','.','0'};			//100 Enviroment temperature value		[xx.x]
-uint8_t evh[3]={'0','0','0'};				//101 Enviroment humidity value			[xxx]
-uint8_t evi[6]={'0','0','0','0','.','0'};	//103 Enviroment illumination value		[xxxx.x]
-
+	uint8_t f1t[4]={'0','0','.','0'};			//10 Field 1 temperature value			[xx.x]
+	uint8_t f1h[3]={'0','0','0'};				//11 Field 1 humidity value				[xxx]
+	uint8_t f1p[4]={'0','0','.','0'};			//12 Field 1 ph value					[xx.x]
+	uint8_t evt[4]={'0','0','.','0'};			//100 Enviroment temperature value		[xx.x]
+	uint8_t evh[3]={'0','0','0'};				//101 Enviroment humidity value			[xxx]
+	uint8_t evi[6]={'0','0','0','0','.','0'};	//103 Enviroment illumination value		[xxxx.x]
 /*Custome global variable declaration end*/
 #define LED1            (PORTE.PODR.BIT.B1)
+#define LED2            (PORTE.PODR.BIT.B2)
+#define LED3            (PORTE.PODR.BIT.B3)
+#define LED4            (PORTE.PODR.BIT.B4)
+#define RLY1            (PORTE.PODR.BIT.B7)
 #define LED_ON          (0)
 #define LED_OFF         (1)
 
@@ -165,20 +166,63 @@ uint8_t evi[6]={'0','0','0','0','.','0'};	//103 Enviroment illumination value		[
 * Return value  : none
 ******************************************************************************/
 
-uint8_t rtnSend = 0;
-uint8_t RecValue[1] = {0};
-uint8_t rtnData[13];
-uint8_t sendCMD[40];
-	int i = 0;
-uint8_t *pValue = &RecValue;
-int rtnRecieve;
-void LORA_Recieve(uint8_t status);
-
-void LoRaJoin(){
-	printf("Send: mac join abp\n");
-	rtnSend = R_SCI_Send(g_my_sci_handle_ch1,"mac join abp",12);
+		uint8_t rtnSend = 0;
+		uint8_t RecValue[1] = {0};
+		uint8_t CMD[32] = {'0'};
+		uint8_t *pValue = &RecValue;
+		int rtnRecieve;
+		void LORA_Recieve(uint8_t status);
+		
+		// char ATcmd_Head[2] = {"\r","\n"};
+		// char ATcmd_Foot[2] = {"\r","\n"};
+		
+void main(void){
+	PORTE.PDR.BIT.B1=1;
+	PORTE.PDR.BIT.B2=1;
+	PORTE.PDR.BIT.B3=1;
+	PORTE.PDR.BIT.B4=1;
+	PORTE.PDR.BIT.B7=1;
+	Rx64MInitPorts();
+	UARTInit();
+	ADCInit();		
+	ADCStart();
+	
+	LED1=LED_OFF;
+	LED2=LED_OFF;
+	LED3=LED_OFF;
+	LED4=LED_OFF;
 	delay1s(1000);
-	LORA_Recieve(rtnSend);
+	//ShowSCIErrorCode();
+    while (1){
+	LED1=LED_ON;
+	LED2=LED_ON;
+	LED3=LED_ON;
+	LED4=LED_ON;
+	
+		// printf("Send: mac join abp\n");
+		// rtnSend = R_SCI_Send(g_my_sci_handle_ch1,"mac join abp",12);
+		// delay1s(1000);
+		// LORA_Recieve(rtnSend);
+		
+		// printf("Send: mac tx ucnf 2 FA\n");
+		// rtnSend = R_SCI_Send(g_my_sci_handle_ch1,"mac tx ucnf 2 FA",16);
+		// delay1s(1000);
+		// LORA_Recieve(rtnSend);
+		
+		delay1s(1000);
+		rtnSend = sensorSend(SENS_FUNC_READ);
+		// sensorRead(rtnSend);
+		// rtnSend = sensorSend(0x04);
+		// sensorRead(rtnSend);
+		
+		printf("\n\nEnded\n");
+
+	LED1=LED_OFF;
+	LED2=LED_OFF;
+	LED3=LED_OFF;
+	LED4=LED_OFF;
+	break;
+	}
 }
 
 
@@ -198,78 +242,42 @@ void LORA_Recieve(uint8_t status){
 	}	
 }
 
-uint8_t sensorSend(){
+uint8_t sensorSend(uint8_t func){
 	uint8_t cmd[8];
-	sprintf(cmd,"%c%c%c%c%c%c%c%c",SENS_ADDR,SENS_FUNC_READ,SENS_REG_READ_STARTH,SENS_REG_READ_STARTL,SENS_REG_COUNTH,SENS_REG_COUNTL,0x40,0x08);
+	uint8_t rtn = 0x00;
+
+	switch(func){
+		case SENS_FUNC_ECHO:
+			sprintf(cmd,"%c%c%c%c%c%c%c%c",SENS_ADDR,SENS_FUNC_ECHO,SENS_REG_ECHO_STARTH,SENS_REG_ECHO_STARTL,SENS_REG_COUNTH,SENS_REG_COUNTL,0x29,0xCC);
+			break;
+		
+		case SENS_FUNC_READ:
+			sprintf(cmd,"%c%c%c%c%c%c%c%c",SENS_ADDR,SENS_FUNC_READ,SENS_REG_READ_STARTH,SENS_REG_READ_STARTL,SENS_REG_COUNTH,SENS_REG_COUNTL,0x81,0xC8);
+			break;
+	}
 	R_SCI_Send(g_my_sci_handle_ch2,cmd,HOST_SEND_LENGTH);
-	return 0;
+	return rtn;
 }
 
 void sensorRead(uint8_t status){
 	*pValue = &RecValue;
-	while(status == SCI_SUCCESS){
+	printf("Send Status=0x%02X\n",status);
+	printf("Return:\n");
+	while(rtnSend == SCI_SUCCESS){
 		rtnRecieve = R_SCI_Receive(g_my_sci_handle_ch2,pValue,1);
 		if(rtnRecieve == SCI_SUCCESS){
-			rtnData[i++] = RecValue[0];
 			printf("0X%2x",RecValue[0]);
 		}
 		else{
-			i=0;
 			printf("Receive Status=0x%02X\n",rtnRecieve);
 			break;
 		}
-		R_BSP_SoftwareDelay (100, BSP_DELAY_MILLISECS);
 	}	
-}
-
-		
-void main(void){
-	PORTE.PDR.BIT.B1=1;
-	
-	Rx64MInitPorts();
-	UARTInit();
-	ADCInit();		
-	ADCStart();
-	LoRaJoin();
-	delay1s(1000);
-	
-	LED1=LED_OFF;
-	sensorSend();
-	delay1s(1000);
-	
-    while (1){
-		LED1=LED_ON;
-		printf("sensorRead\n");
-		sensorRead(0);
-		if(rtnData[12] != 0x00){
-			break;
-		}
-	}
-    
-	sprintf(sendCMD,"mac tx ucnf 2 %02x%02x%02x%02x%02x%02x%02x%02x",
-	rtnData[3],rtnData[4],
-	rtnData[5],rtnData[6],
-	rtnData[7],rtnData[8],
-	rtnData[9],rtnData[10]);
-	printf("Send Data\n");
-	rtnSend = R_SCI_Send(g_my_sci_handle_ch1,sendCMD,40);
-	delay1s(1000);
-	LORA_Recieve(rtnSend);
-	
-	printf("\n\nEnded\n");
-
-	LED1=LED_OFF;
-	R_BSP_SoftwareDelay (100, BSP_DELAY_MILLISECS);
 }
 
 /*****************************************************************************/
 /*Functions for . Begin*/
 /*****************************************************************************/
-
-// uint16_t HLbyte(uint8_t HIGH, uint8_t LOW){
-	// uint16_t
-	// return 0;
-// }
 
 void U16toStr(uint16_t value, uint8_t *buff){
  uint8_t i;

@@ -2,7 +2,22 @@
 #define LORA_H
 
 
-
+void ShowSCIErrorCode(){
+	printf("==========SCI Error Code==========\n");
+	printf("SCI_SUCCESS: %02X\n",SCI_SUCCESS);
+	printf("SCI_ERR_BAD_CHAN: %02X\n",SCI_ERR_BAD_CHAN);
+	printf("SCI_ERR_OMITTED_CHAN: %02X\n",SCI_ERR_OMITTED_CHAN);
+	printf("SCI_ERR_CH_NOT_CLOSED: %02X\n",SCI_ERR_CH_NOT_CLOSED);
+	printf("SCI_ERR_BAD_MODE: %02X\n",SCI_ERR_BAD_MODE);
+	printf("SCI_ERR_INVALID_ARG: %02X\n",SCI_ERR_INVALID_ARG);
+	printf("SCI_ERR_NULL_PTR: %02X\n",SCI_ERR_NULL_PTR);
+	printf("SCI_ERR_XCVR_BUSY: %02X\n",SCI_ERR_XCVR_BUSY);
+	printf("SCI_ERR_QUEUE_UNAVAILABLE: %02X\n",SCI_ERR_QUEUE_UNAVAILABLE);
+	printf("SCI_ERR_INSUFFICIENT_SPACE: %02X\n",SCI_ERR_INSUFFICIENT_SPACE);
+	printf("SCI_ERR_INSUFFICIENT_DATA: %02X\n",SCI_ERR_INSUFFICIENT_DATA);
+	printf("SCI_ERR_XFER_NOT_DONE: %02X\n",SCI_ERR_XFER_NOT_DONE);
+	printf("==========SCI Error Code==========\n\n");
+}
 
 
 #endif
