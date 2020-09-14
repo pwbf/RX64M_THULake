@@ -82,6 +82,8 @@ void main(void);
 void init_mtu0(void);   			/*For ADC*/
 void MyCallback(void *pArgs);   	/*For ADC*/
 
+// uint8_t HLbyte(uint8_t HIGH, uint8_t LOW);
+
 /******************************************************************************
 Private global variables and functions
 ******************************************************************************/
@@ -101,8 +103,8 @@ static void ADCStart(void);
 
 
 /*For UART.Begin*/
-void my_sci_callback(void *pArgs);
 void my_sci_callback_ch1(void *pArgs);
+void my_sci_callback_ch2(void *pArgs);
 void my_sci_callback_ch7(void *pArgs);
 static void Rx64MInitPorts(void);
 static void UARTInit(void);
@@ -121,8 +123,8 @@ static const uint8_t HexChar[16] = {'0','1','2','3','4','5','6','7','8','9','A',
 
 /* Handle storage. Needs to persist as long as SCI calls are going to be made.*/
 static sci_hdl_t   g_my_sci_handle;
-static sci_hdl_t   g_my_sci_handle_ch1;	//For LoRa
-static sci_hdl_t   g_my_sci_handle_ch7;	//For Sensor
+static sci_hdl_t   g_my_sci_handle_ch1;		//For LoRa
+static sci_hdl_t   g_my_sci_handle_ch2;		//For Sensor
 /*For UART. End*/
 
 /*Custome global variable declaration start*/
@@ -142,18 +144,15 @@ float global_env_humi_adj=0;			//adjust enviroment humidity
 float global_env_illu_adj=0;			//adjust enviroment illumination
 
 uint8_t bt_str_send[24];
-	uint8_t f1t[4]={'0','0','.','0'};			//10 Field 1 temperature value			[xx.x]
-	uint8_t f1h[3]={'0','0','0'};				//11 Field 1 humidity value				[xxx]
-	uint8_t f1p[4]={'0','0','.','0'};			//12 Field 1 ph value					[xx.x]
-	uint8_t evt[4]={'0','0','.','0'};			//100 Enviroment temperature value		[xx.x]
-	uint8_t evh[3]={'0','0','0'};				//101 Enviroment humidity value			[xxx]
-	uint8_t evi[6]={'0','0','0','0','.','0'};	//103 Enviroment illumination value		[xxxx.x]
+uint8_t f1t[4]={'0','0','.','0'};			//10 Field 1 temperature value			[xx.x]
+uint8_t f1h[3]={'0','0','0'};				//11 Field 1 humidity value				[xxx]
+uint8_t f1p[4]={'0','0','.','0'};			//12 Field 1 ph value					[xx.x]
+uint8_t evt[4]={'0','0','.','0'};			//100 Enviroment temperature value		[xx.x]
+uint8_t evh[3]={'0','0','0'};				//101 Enviroment humidity value			[xxx]
+uint8_t evi[6]={'0','0','0','0','.','0'};	//103 Enviroment illumination value		[xxxx.x]
+
 /*Custome global variable declaration end*/
 #define LED1            (PORTE.PODR.BIT.B1)
-#define LED2            (PORTE.PODR.BIT.B2)
-#define LED3            (PORTE.PODR.BIT.B3)
-#define LED4            (PORTE.PODR.BIT.B4)
-#define RLY1            (PORTE.PODR.BIT.B7)
 #define LED_ON          (0)
 #define LED_OFF         (1)
 
@@ -166,70 +165,18 @@ uint8_t bt_str_send[24];
 * Return value  : none
 ******************************************************************************/
 
-		uint8_t rtnSend = 0;
-		uint8_t RecValue[1] = {0};
-		uint8_t CMD[32] = {'0'};
-		uint8_t *pValue = &RecValue;
-		int rtnRecieve;
-		void LORA_Recieve(uint8_t status);
-		
-		// char ATcmd_Head[2] = {"\r","\n"};
-		// char ATcmd_Foot[2] = {"\r","\n"};
-		
-void main(void){
-	PORTE.PDR.BIT.B1=1;
-	PORTE.PDR.BIT.B2=1;
-	PORTE.PDR.BIT.B3=1;
-	PORTE.PDR.BIT.B4=1;
-	PORTE.PDR.BIT.B7=1;
-	Rx64MInitPorts();
-	UARTInit();
-	ADCInit();		
-	ADCStart();
+uint8_t rtnSend = 0;
+uint8_t RecValue[1] = {0};
+uint8_t rtnData[13];
+uint8_t *pValue = &RecValue;
+int rtnRecieve;
+void LORA_Recieve(uint8_t status);
 
-#if 0
-    sci_err_t   my_sci_err;
-        /* Wait to get a character from the terminal so we know that it is ready. */
-        do
-        {
-        my_sci_err = R_SCI_Receive(g_my_sci_handle, &my_char, 1);
-        } while (SCI_ERR_INSUFFICIENT_DATA == my_sci_err);
-#endif
-	LED1=LED_OFF;
-	LED2=LED_OFF;
-	LED3=LED_OFF;
-	LED4=LED_OFF;
+void LoRaJoin(){
+	printf("Send: mac join abp\n");
+	rtnSend = R_SCI_Send(g_my_sci_handle_ch1,"mac join abp",12);
 	delay1s(1000);
-	//ShowSCIErrorCode();
-    while (1){
-	LED1=LED_ON;
-	LED2=LED_ON;
-	LED3=LED_ON;
-	LED4=LED_ON;
-	
-		printf("Send: mac join abp\n");
-		rtnSend = R_SCI_Send(g_my_sci_handle_ch1,"mac join abp",12);
-		delay1s(1000);
-		LORA_Recieve(rtnSend);
-		delay1s(1000);
-		
-		printf("Send: mac tx ucnf 2 FA\n");
-		rtnSend = R_SCI_Send(g_my_sci_handle_ch1,"mac tx ucnf 2 FA",16);
-		delay1s(1000);
-		LORA_Recieve(rtnSend);
-		// rtnSend = sensorSend(0x06);
-		// sensorRead(rtnSend);
-		// rtnSend = sensorSend(0x04);
-		// sensorRead(rtnSend);
-		
-		printf("\n\nEnded\n");
-
-	LED1=LED_OFF;
-	LED2=LED_OFF;
-	LED3=LED_OFF;
-	LED4=LED_OFF;
-	break;
-	}
+	LORA_Recieve(rtnSend);
 }
 
 
@@ -249,54 +196,82 @@ void LORA_Recieve(uint8_t status){
 	}	
 }
 
-// uint8_t sensorSend(uint8_t func){
-	// // uint8_t cmd[8] = {0x00};
-	// // uint8_t len = 0x00;
-	// switch(func){
-		// case 0x06:
-			// uint8_t cmd[8] = {
-				// SENS_ADDR,SENS_FUNC_ECHO,
-				// SENS_REG_STARTH,SENS_REG_STARTL,
-				// SENS_REG_COUNTH,SENS_REG_COUNTL,
-				// SENS_CRC_H,SENS_CRC_L
-			// };
-			// uint8_t len = HOST_SEND_LENGTH;
-			// break;
-			
-		// case 0x04:
-			// uint8_t cmd[8] = {
-				// SENS_ADDR,SENS_FUNC_READ,
-				// SENS_REG_STARTH,SENS_REG_STARTL,
-				// SENS_REG_COUNTH,SENS_REG_COUNTL,
-				// SENS_CRC_H,SENS_CRC_L
-			// };
-			// uint8_t len = HOST_SEND_LENGTH;
-			// break;
-			
-	// }
-	
-	// return R_SCI_Send(g_my_sci_handle_ch7,cmd,len);
-// }
+uint8_t sensorSend(){
+	uint8_t cmd[8];
+	sprintf(cmd,"%c%c%c%c%c%c%c%c",SENS_ADDR,SENS_FUNC_READ,SENS_REG_READ_STARTH,SENS_REG_READ_STARTL,SENS_REG_COUNTH,SENS_REG_COUNTL,0x40,0x08);
+	R_SCI_Send(g_my_sci_handle_ch2,cmd,HOST_SEND_LENGTH);
+	return 0;
+}
 
-// void sensorRead(uint8_t status){
-	// *pValue = &RecValue;
-	// printf("Send Status=0x%02X\n",status);
-	// printf("Return:\n");
-	// while(rtnSend == SCI_SUCCESS){
-		// rtnRecieve = R_SCI_Receive(g_my_sci_handle_ch7,pValue,1);
-		// if(rtnRecieve == SCI_SUCCESS){
+void sensorRead(uint8_t status){
+	*pValue = &RecValue;
+	printf("Send Status=0x%02X\n",status);
+	printf("Return:\n");
+	int i = 0;
+	while(status == SCI_SUCCESS){
+		rtnRecieve = R_SCI_Receive(g_my_sci_handle_ch2,pValue,1);
+		if(rtnRecieve == SCI_SUCCESS){
+			rtnData[i++] = RecValue[0];
 			// printf("0X%2x",RecValue[0]);
-		// }
-		// else{
-			// //printf("Receive Status=0x%02X\n",rtnRecieve);
-			// break;
-		// }
-	// }	
-// }
+		}
+		else{
+			printf("Receive Status=0x%02X\n",rtnRecieve);
+			break;
+		}
+		R_BSP_SoftwareDelay (100, BSP_DELAY_MILLISECS);
+	}	
+}
+
+		
+void main(void){
+	PORTE.PDR.BIT.B1=1;
+	
+	Rx64MInitPorts();
+	UARTInit();
+	ADCInit();		
+	ADCStart();
+	LoRaJoin();
+	
+	LED1=LED_OFF;
+	
+	//ShowSCIErrorCode();
+	uint8_t cmd[8];
+	sprintf(cmd,"%c%c%c%c%c%c%c%c",SENS_ADDR,SENS_FUNC_READ,SENS_REG_READ_STARTH,SENS_REG_READ_STARTL,SENS_REG_COUNTH,SENS_REG_COUNTL,0x40,0x08);
+	R_SCI_Send(g_my_sci_handle_ch2,cmd,HOST_SEND_LENGTH);
+	
+    while (1){
+		LED1=LED_ON;
+		
+		sensorRead(0);
+		printf("Send: mac tx ucnf 2 FA\n");
+		rtnSend = R_SCI_Send(g_my_sci_handle_ch1,"mac tx ucnf 2 FA",16);
+		delay1s(1000);
+		LORA_Recieve(rtnSend);
+		// RES3=LED_OFF;
+        // R_BSP_SoftwareDelay (1, BSP_DELAY_SECS);
+		// rtnSend = sensorSend();
+		// RES3=LED_ON;
+        // R_BSP_SoftwareDelay (2, BSP_DELAY_SECS);
+		// delay1s(1000);
+		// rtnSend = sensorSend(0x04);
+		// sensorRead(rtnSend);
+		
+		printf("\n\nEnded\n");
+
+		LED1=LED_OFF;
+		R_BSP_SoftwareDelay (100, BSP_DELAY_MILLISECS);
+		break;
+	}
+}
 
 /*****************************************************************************/
 /*Functions for . Begin*/
 /*****************************************************************************/
+
+// uint16_t HLbyte(uint8_t HIGH, uint8_t LOW){
+	// uint16_t
+	// return 0;
+// }
 
 void U16toStr(uint16_t value, uint8_t *buff){
  uint8_t i;
@@ -548,9 +523,8 @@ static void SendSCIVersion(void){
 ******************************************************************************/
 static void UARTInit(void){
         sci_cfg_t   my_sci_config;
-        sci_err_t   my_sci_err;
         sci_err_t   my_sci_err_ch1;
-        sci_err_t   my_sci_err_ch7;
+        sci_err_t   my_sci_err_ch2;
 
     /**********************************************************************************/
         /* Set up the configuration data structure for asynchronous (UART) operation. */
@@ -565,22 +539,21 @@ static void UARTInit(void){
         /* OPEN ASYNC CHANNEL
         *  Provide address of the config structure,
         *  the callback function to be assigned,
-        *  and the location for the handle to be stored.*/     /*Use channel 7*/
-        //my_sci_err = R_SCI_Open(SCI_CH5, SCI_MODE_ASYNC, &my_sci_config, my_sci_callback, &g_my_sci_handle);
+        *  and the location for the handle to be stored.*/     
+		
+		/*Use channel 1 & 2*/
 		my_sci_err_ch1 = R_SCI_Open(SCI_CH1, SCI_MODE_ASYNC, &my_sci_config, my_sci_callback_ch1, &g_my_sci_handle_ch1);
-		my_sci_err_ch7 = R_SCI_Open(SCI_CH7, SCI_MODE_ASYNC, &my_sci_config, my_sci_callback_ch7, &g_my_sci_handle_ch7);
+		my_sci_err_ch2 = R_SCI_Open(SCI_CH2, SCI_MODE_ASYNC, &my_sci_config, my_sci_callback_ch2, &g_my_sci_handle_ch2);
 
         /* If there were an error this would demonstrate error detection of API calls. */
-        if (SCI_SUCCESS != my_sci_err)
+        if (SCI_SUCCESS != my_sci_err_ch1)
         {
-            // nop(); // Your error handling code would go here.
-			printf("SCI_Open_Ch7_Error!!\n");
+			printf("SCI_Open_Ch1_Error!!\n");
         }
 		
-		if (SCI_SUCCESS != my_sci_err_ch1)
+		if (SCI_SUCCESS != my_sci_err_ch2)
         {
-            // nop(); // Your error handling code would go here.
-			printf("SCI_Open_Ch1_Error!!\n");
+			printf("SCI_Open_Ch2_Error!!\n");
         }
 }
 
@@ -592,7 +565,7 @@ static void UARTInit(void){
 *                    contains event and associated data.
 * Return Value : none
 ******************************************************************************/
-void my_sci_callback(void *pArgs){
+void my_sci_callback_ch2(void *pArgs){
 	sci_cb_args_t   *args;
 
     args = (sci_cb_args_t *)pArgs;
@@ -665,42 +638,7 @@ void my_sci_callback_ch1(void *pArgs){
         nop();
     }
 }
-void my_sci_callback_ch7(void *pArgs){
-	sci_cb_args_t   *args;
 
-    args = (sci_cb_args_t *)pArgs;
-
-    if (args->event == SCI_EVT_RX_CHAR)
-    {
-        /* From RXI interrupt; received character data is in args->byte */
-        LED0 = ~LED0;         // Toggle LED to demonstrate callback execution.
-        nop();
-    }
-    else if (args->event == SCI_EVT_RXBUF_OVFL)
-    {
-        /* From RXI interrupt; rx queue is full; 'lost' data is in args->byte
-           You will need to increase buffer size or reduce baud rate */
-        nop();
-    }
-    else if (args->event == SCI_EVT_OVFL_ERR)
-    {
-        /* From receiver overflow error interrupt; error data is in args->byte
-           Error condition is cleared in calling interrupt routine */
-        nop();
-    }
-    else if (args->event == SCI_EVT_FRAMING_ERR)
-    {
-        /* From receiver framing error interrupt; error data is in args->byte
-           Error condition is cleared in calling interrupt routine */
-        nop();
-    }
-    else if (args->event == SCI_EVT_PARITY_ERR)
-    {
-        /* From receiver parity error interrupt; error data is in args->byte
-           Error condition is cleared in calling interrupt routine */
-        nop();
-    }
-}
 
 /*****************************************************************************/
 /*Functions for UART.End*/
@@ -718,15 +656,15 @@ static void Rx64MInitPorts(void){
         R_BSP_RegisterProtectDisable(BSP_REG_PROTECT_MPC); // Use BSP function to unlock the MPC register.
 
 	/*Sensor*/
-	/*For SCI-UART_ch7*/
-        /* Set RXD7 pin */  /*P92*/
-        MPC.P92PFS.BYTE = 0x0A;
-        PORT9.PMR.BYTE |= 0x04;    // Set P92 mode to peripheral operation
-        /* Set TXD7 pin */  /*P90*/
-        PORT9.PODR.BYTE |= 0x01;
-        MPC.P90PFS.BYTE = 0x0A;
-        PORT9.PMR.BYTE |= 0x01;  // Set P90 mode to peripheral operation
-        PORT9.PDR.BYTE |= 0x01;
+	/*For SCI-UART_ch2*/
+        /* Set RXD2 pin */  /*P52*/
+        MPC.P52PFS.BYTE = 0x0A;
+        PORT5.PMR.BYTE |= 0x04;    // Set P52 mode to peripheral operation
+        /* Set TXD2 pin */  /*P50*/
+        PORT5.PODR.BYTE |= 0x01;
+        MPC.P50PFS.BYTE = 0x0A;
+        PORT5.PMR.BYTE |= 0x01;  // Set P50 mode to peripheral operation
+        PORT5.PDR.BYTE |= 0x01;	
 		
 	/*LoRa*/
 	/*For SCI-UART_ch1*/ 
