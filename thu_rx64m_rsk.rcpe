@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <MicomToolCommonProjectFile Version="1.00">
-  <CreatorType Name="CubeSuite+" Version="V8.02.00  [07 Jun 2019]" />
+  <CreatorType Name="CubeSuite+" Version="V8.03.00  [21 Nov 2019]" />
   <Placeholders>
     <PlaceholderPrefix>%</PlaceholderPrefix>
     <PlaceholderPostfix>%</PlaceholderPostfix>
@@ -308,7 +308,7 @@
       <DebugToolSettings />
     </DebugOptions>
     <Device Series="RX">R5F564MLCxFC</Device>
-    <BuildOptions Name="CC-RX" Version="V3.01.00">
+    <BuildOptions Name="CC-RX" Version="V3.02.00">
       <BuildMode Name="DefaultBuild" Active="False">
         <GeneralOptions>
           <SimultaneouslyBuild>true</SimultaneouslyBuild>
@@ -359,6 +359,7 @@
           <Option>-include=r_sci_rx</Option>
           <Option>-output=obj</Option>
           <Option>-debug</Option>
+          <Option>-g_line</Option>
           <Option>-nologo</Option>
         </CompileOptions>
         <AssembleOptions>
@@ -525,6 +526,7 @@
           <Option>-define=__RX=1</Option>
           <Option>-output=obj</Option>
           <Option>-debug</Option>
+          <Option>-g_line</Option>
           <Option>-nologo</Option>
         </CompileOptions>
         <AssembleOptions>

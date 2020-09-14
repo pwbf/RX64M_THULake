@@ -31,20 +31,6 @@ Includes <System Includes> , "Project Includes"
 #include <stdbool.h>
 
 
-
-#if ETHERNET_FUNCTION_ENABLE
-
-/*For Ethernet*/
-#include "r_t4_itcpip.h"
-#include "r_sys_time_rx_if.h"
-#include "echo_srv_sample.h"
-#endif
-
-/*For ADC*/
-#include "platform.h"
-#include "r_s12ad_rx_config.h"
-#include "r_s12ad_rx_if.h"
-
 /*For SCI*/
 #include "r_sci_rx_if.h"        // The SCI module API interface file.
 #include "r_byteq_if.h"         // The BYTEQ module API interface file.
@@ -60,45 +46,17 @@ Includes <System Includes> , "Project Includes"
 // void sensorRead(uint8_t status);
 
 /******************************************************************************
-Macro definitions
-******************************************************************************/
-#if ETHERNET_FUNCTION_ENABLE
-#if (APPLICATION_T4_CHANNEL_NUM  == (2))
-#define T4_WORK_SIZE (9112)  /* Maximum size used in echo server sample program */
-#elif (APPLICATION_T4_CHANNEL_NUM == (1))
-#define T4_WORK_SIZE (4412)  /* Maximum size used in echo server sample program */
-#endif
-#endif
-
-/******************************************************************************
-Imported global variables and functions (from other files)
-******************************************************************************/
-extern void echo_srv(void);
-
-/******************************************************************************
 Exported global variables and functions (to be accessed by other files)
 ******************************************************************************/
 void main(void);
 void init_mtu0(void);   			/*For ADC*/
 void MyCallback(void *pArgs);   	/*For ADC*/
 
+// uint8_t HLbyte(uint8_t HIGH, uint8_t LOW);
+
 /******************************************************************************
 Private global variables and functions
 ******************************************************************************/
-#if ETHERNET_FUNCTION_ENABLE
-static UW tcpudp_work[T4_WORK_SIZE / 4 + 1];
-#endif
-
-/*For ADC.Begin*/
-uint16_t  g_data0;  // Global variable for saving result of ADC CH0 conversions
-uint16_t  g_data1;  // Global variable for saving result of ADC CH1 conversions
-uint16_t  g_data2;  // Global variable for saving result of ADC CH2 conversions
-uint16_t  g_data3;  // Global variable for saving result of ADC CH3 conversions
-uint16_t  g_data;  // Global variable for saving result of ADC CH0 conversions
-static void ADCInit(void);
-static void ADCStart(void);
-/*For ADC.End*/
-
 
 /*For UART.Begin*/
 void my_sci_callback_ch1(void *pArgs);
@@ -106,18 +64,6 @@ void my_sci_callback_ch2(void *pArgs);
 void my_sci_callback_ch7(void *pArgs);
 static void Rx64MInitPorts(void);
 static void UARTInit(void);
-static void SendADCValue(const uint16_t adc_value,int mode);
-static void SendSCIVersion(void);
-
-void U16toStr(uint16_t value, uint8_t *buff);
-void HMI_n_value(uint8_t n_id,uint16_t n_value);
-void HMI_z_value(uint8_t z_id,uint16_t z_value);
-void delay1s(uint8_t tmp);
-void HMI_page(uint8_t page_id);
-/*for hmi test*/
-uint8_t HexToChar_buff[4] = {0x00,0x00,0x00,0x00};
-uint8_t HMI_page_order[10] = {0x70,0x61,0x67,0x65,0x20,0x30,0x30,0xff,0xff,0xff};
-static const uint8_t HexChar[16] = {'0','1','2','3','4','5','6','7','8','9','A','B','C','D','E','F'};
 
 /* Handle storage. Needs to persist as long as SCI calls are going to be made.*/
 static sci_hdl_t   g_my_sci_handle;
@@ -125,35 +71,15 @@ static sci_hdl_t   g_my_sci_handle_ch1;		//For LoRa
 static sci_hdl_t   g_my_sci_handle_ch2;		//For Sensor
 /*For UART. End*/
 
-/*Custome global variable declaration start*/
-int refresh_delay=1000;
-float global_f1_temp=0;			//p40
-float global_f1_humi=0;			//p41
-float global_f1_phph=0;			//p42
-float global_env_temp=0;		//p
-float global_env_humi=0;		//p
-float global_env_illu=0;		//p43
-
-float global_f1_temp_adj=-15;			//adjust field 1 temperature
-float global_f1_humi_adj=+40;			//adjust field 1 humidity
-float global_f1_phph_adj=-1.1;			//adjust field 1 ph
-float global_env_temp_adj=0;			//adjust enviroment temperature
-float global_env_humi_adj=0;			//adjust enviroment humidity
-float global_env_illu_adj=0;			//adjust enviroment illumination
-
-uint8_t bt_str_send[24];
-	uint8_t f1t[4]={'0','0','.','0'};			//10 Field 1 temperature value			[xx.x]
-	uint8_t f1h[3]={'0','0','0'};				//11 Field 1 humidity value				[xxx]
-	uint8_t f1p[4]={'0','0','.','0'};			//12 Field 1 ph value					[xx.x]
-	uint8_t evt[4]={'0','0','.','0'};			//100 Enviroment temperature value		[xx.x]
-	uint8_t evh[3]={'0','0','0'};				//101 Enviroment humidity value			[xxx]
-	uint8_t evi[6]={'0','0','0','0','.','0'};	//103 Enviroment illumination value		[xxxx.x]
 /*Custome global variable declaration end*/
 #define LED1            (PORTE.PODR.BIT.B1)
+#define LED1_PDR        (PORTE.PDR.BIT.B1)
 #define LED2            (PORTE.PODR.BIT.B2)
+#define LED2_PDR        (PORTE.PDR.BIT.B2)
 #define LED3            (PORTE.PODR.BIT.B3)
+#define LED3_PDR        (PORTE.PDR.BIT.B3)
 #define LED4            (PORTE.PODR.BIT.B4)
-#define RLY1            (PORTE.PODR.BIT.B7)
+#define LED4_PDR        (PORTE.PDR.BIT.B4)
 #define LED_ON          (0)
 #define LED_OFF         (1)
 
@@ -166,63 +92,19 @@ uint8_t bt_str_send[24];
 * Return value  : none
 ******************************************************************************/
 
-		uint8_t rtnSend = 0;
-		uint8_t RecValue[1] = {0};
-		uint8_t CMD[32] = {'0'};
-		uint8_t *pValue = &RecValue;
-		int rtnRecieve;
-		void LORA_Recieve(uint8_t status);
-		
-		// char ATcmd_Head[2] = {"\r","\n"};
-		// char ATcmd_Foot[2] = {"\r","\n"};
-		
-void main(void){
-	PORTE.PDR.BIT.B1=1;
-	PORTE.PDR.BIT.B2=1;
-	PORTE.PDR.BIT.B3=1;
-	PORTE.PDR.BIT.B4=1;
-	PORTE.PDR.BIT.B7=1;
-	Rx64MInitPorts();
-	UARTInit();
-	ADCInit();		
-	ADCStart();
-	
-	LED1=LED_OFF;
-	LED2=LED_OFF;
-	LED3=LED_OFF;
-	LED4=LED_OFF;
-	delay1s(1000);
-	//ShowSCIErrorCode();
-    while (1){
-	LED1=LED_ON;
-	LED2=LED_ON;
-	LED3=LED_ON;
-	LED4=LED_ON;
-	
-		// printf("Send: mac join abp\n");
-		// rtnSend = R_SCI_Send(g_my_sci_handle_ch1,"mac join abp",12);
-		// delay1s(1000);
-		// LORA_Recieve(rtnSend);
-		
-		// printf("Send: mac tx ucnf 2 FA\n");
-		// rtnSend = R_SCI_Send(g_my_sci_handle_ch1,"mac tx ucnf 2 FA",16);
-		// delay1s(1000);
-		// LORA_Recieve(rtnSend);
-		
-		delay1s(1000);
-		rtnSend = sensorSend(SENS_FUNC_READ);
-		// sensorRead(rtnSend);
-		// rtnSend = sensorSend(0x04);
-		// sensorRead(rtnSend);
-		
-		printf("\n\nEnded\n");
+uint8_t rtnSend = 0;
+uint8_t RecValue[1] = {0};
+uint8_t rtnData[13];
+uint8_t sendCMD[40];
+uint8_t *pValue = &RecValue;
+int rtnRecieve;
+void LORA_Recieve(uint8_t status);
 
-	LED1=LED_OFF;
-	LED2=LED_OFF;
-	LED3=LED_OFF;
-	LED4=LED_OFF;
-	break;
-	}
+void LoRaJoin(){
+	printf("Send: mac join abp\n");
+	rtnSend = R_SCI_Send(g_my_sci_handle_ch1,"mac join abp",12);
+	R_BSP_SoftwareDelay (1, BSP_DELAY_SECS);
+	LORA_Recieve(rtnSend);
 }
 
 
@@ -242,194 +124,135 @@ void LORA_Recieve(uint8_t status){
 	}	
 }
 
-uint8_t sensorSend(uint8_t func){
+uint8_t sensorSend(){
 	uint8_t cmd[8];
-	uint8_t rtn = 0x00;
-
-	switch(func){
-		case SENS_FUNC_ECHO:
-			sprintf(cmd,"%c%c%c%c%c%c%c%c",SENS_ADDR,SENS_FUNC_ECHO,SENS_REG_ECHO_STARTH,SENS_REG_ECHO_STARTL,SENS_REG_COUNTH,SENS_REG_COUNTL,0x29,0xCC);
-			break;
-		
-		case SENS_FUNC_READ:
-			sprintf(cmd,"%c%c%c%c%c%c%c%c",SENS_ADDR,SENS_FUNC_READ,SENS_REG_READ_STARTH,SENS_REG_READ_STARTL,SENS_REG_COUNTH,SENS_REG_COUNTL,0x81,0xC8);
-			break;
-	}
+	sprintf(cmd,"%c%c%c%c%c%c%c%c",SENS_ADDR,SENS_FUNC_READ,SENS_REG_READ_STARTH,SENS_REG_READ_STARTL,SENS_REG_COUNTH,SENS_REG_COUNTL,0x40,0x08);
 	R_SCI_Send(g_my_sci_handle_ch2,cmd,HOST_SEND_LENGTH);
-	return rtn;
+	return 0;
 }
 
 void sensorRead(uint8_t status){
+	uint8_t index = 0;
 	*pValue = &RecValue;
-	printf("Send Status=0x%02X\n",status);
-	printf("Return:\n");
-	while(rtnSend == SCI_SUCCESS){
+	while(status == SCI_SUCCESS){
 		rtnRecieve = R_SCI_Receive(g_my_sci_handle_ch2,pValue,1);
 		if(rtnRecieve == SCI_SUCCESS){
+			rtnData[index++] = RecValue[0];
 			printf("0X%2x",RecValue[0]);
 		}
 		else{
-			printf("Receive Status=0x%02X\n",rtnRecieve);
+			index=0;
+			//printf(".");
+			// printf("Receive Status=0x%02X\n",rtnRecieve);
 			break;
 		}
+		R_BSP_SoftwareDelay (100, BSP_DELAY_MILLISECS);
 	}	
+}
+
+
+void main(void){
+	uint8_t tm = 0;
+	uint8_t count = 0;
+	uint8_t watchDog = 12000;
+	uint8_t rtnLen = 13;
+	uint8_t loop = 0;
+	
+	LED1_PDR = 1;
+	LED2_PDR = 1;
+	LED3_PDR = 1;
+	LED4_PDR = 1;
+	
+	Rx64MInitPorts();
+	UARTInit();
+	LoRaJoin();
+	R_BSP_SoftwareDelay (1, BSP_DELAY_SECS);
+	
+	LED1=LED_OFF;
+	LED2=LED_OFF;
+	LED3=LED_OFF;
+	LED4=LED_OFF;
+    	while (1){
+		tm = 0;
+		while(tm++ < 6){
+			count = 0;
+			printf("Send cmd to sensor\n");
+			sensorSend();
+			LED1=LED_ON;
+			R_BSP_SoftwareDelay (1, BSP_DELAY_SECS);
+			printf("Read sensor\n");
+	    		while (1){
+				sensorRead(0);
+				if(rtnData[12] != 0x00 || count++>=12000){
+					if(rtnData[12] != 0x00)
+						printf("\nGot it!\n");
+					else
+						printf("\nTimeout!\n");
+					break;
+				}
+			}
+			LED2=LED_ON;
+			
+			uint16_t phph = rtnData[3]<<8 | rtnData[4];
+			uint16_t dodo = rtnData[5]<<8 | rtnData[6];
+			uint16_t cond = rtnData[7]<<8 | rtnData[8];
+			uint16_t temp = rtnData[9]<<8 | rtnData[10];
+			
+			
+			printf("phph: %d\n",phph);
+			printf("dodo: %d\n",dodo);
+			printf("cond: %d\n",cond);
+			printf("temp: %d\n",temp);
+			
+			uint8_t phF = phph/100;
+			uint8_t phS = phph%100;
+			uint8_t doF = dodo/100;
+			uint8_t doS = dodo%100;
+			uint8_t coF = cond/1000;
+			uint8_t coS = cond%1000;
+			uint8_t teF = temp/100;
+			uint8_t teS = temp%100;
+			
+			printf("Pack command for LoRa\n");
+			sprintf(sendCMD,"mac tx ucnf 2 %02d%02d%02d%02d%01d%03d%02d%02d",
+			phF,phS,
+			doF,doS,
+			coF,coS,
+			teF,teS);
+			/*sprintf(sendCMD,"mac tx ucnf 2 %02x%02x%02x%02x%02x%02x%02x%02x",
+			rtnData[3],rtnData[4],
+			rtnData[5],rtnData[6],
+			rtnData[7],rtnData[8],
+			rtnData[9],rtnData[10]);*/
+			LED3=LED_ON;
+			printf("Flush buffer\n");
+	    		for(loop=0;loop<rtnLen;loop++)
+				rtnData[loop] = 0x00;
+			
+			LED4=LED_ON;	
+			R_BSP_SoftwareDelay (9, BSP_DELAY_SECS);
+		}
+    
+		LED1=LED_ON;
+		LED2=LED_ON;
+		LED3=LED_ON;
+		LED4=LED_ON;
+		printf("LoRa send\n");
+		rtnSend = R_SCI_Send(g_my_sci_handle_ch1,sendCMD,40);
+		R_BSP_SoftwareDelay (1, BSP_DELAY_SECS);
+		LORA_Recieve(rtnSend);
+    
+		LED1=LED_OFF;
+		LED2=LED_OFF;
+		LED3=LED_OFF;
+		LED4=LED_OFF;
+	}
 }
 
 /*****************************************************************************/
 /*Functions for . Begin*/
 /*****************************************************************************/
 
-void U16toStr(uint16_t value, uint8_t *buff){
- uint8_t i;
- uint8_t j;
- int8_t temp;
-
- if (value == 0)
- {
-  buff[0] = '0';
-  buff[1] = 0;
-  return;
- }
-
- i = 0;
- while (value)
- {
-  buff[i] = HexChar[value % 10];
-  value /= 10;
-  i++;
- }
-
- buff[i] = 0;
-
- for (j = 0; j < (i / 2); j++)
- {
-  temp = buff[j];
-  buff[j] = buff[i - j -1];
-  buff[i - j -1] = temp;
- }
-}
-
-void delay1s(unsigned int tmp){
-    unsigned int i,j;
-    i=tmp;
-    while(i--){
-        j=80404;
-        while(j--);
-    }
-}
-
-
-
-/*****************************************************************************
-* Function Name: ADCStart
-* Description  :
-* Arguments   :
-* Return Value : none
-******************************************************************************/
-static void ADCStart(void){
-        adc_err_t       adc_err;
-
-        /* Initialize trigger source (MTU0) */
-        init_mtu0();
-
-        /* Enable triggers in ADC */   /*Enables to start A/D conversion with TRIG, */
-        adc_err = R_ADC_Control(0, ADC_CMD_ENABLE_TRIG, FIT_NO_PTR);
-        while (ADC_SUCCESS != adc_err)
-        {
-        /* Error - loop here for debug */
-        }
-
-}
-
-
-/*****************************************************************************
-* Function Name: ADCInit
-* Description  :
-* Arguments   :
-* Return Value : none
-******************************************************************************/
-static void ADCInit(void){
-        adc_err_t       adc_err;
-        adc_err_t       adc_err0;
-        adc_err_t       adc_err1;
-        adc_err_t       adc_err2;
-        adc_err_t       adc_err3;
-        adc_cfg_t       config;     // Open() configuration
-        adc_ch_cfg_t    ch_cfg;     // Control() channel configuration
-
-        /* Clear all members of the adc_cfg_t structure */
-        memset(&config, 0, sizeof(config));
-        config.resolution =  ADC_RESOLUTION_12_BIT;     // 12 bit resolution
-        config.alignment = ADC_ALIGN_RIGHT;             // conversions are right-aligned
-        config.add_cnt = ADC_ADD_OFF;                   // no addition on conversions
-        config.clearing = ADC_CLEAR_AFTER_READ_OFF;     // data remains in register after reading
-        config.trigger = ADC_TRIG_SYNC_TRG0AN;          // trigger from mtu
-        config.trigger_groupb = ADC_TRIG_NONE;          // group mode not used
-        config.priority = 3;                            // interrupt priority 3 (1=low, 15=high)
-        config.priority_groupb = 0;                     // group mode not used
-
-        // adc_err = R_ADC_Open(0, ADC_MODE_SS_ONE_CH, &config, MyCallback);
-        // adc_err = R_ADC_Open(0, ADC_MODE_SS_MULTI_CH, &config, MyCallback);
-        adc_err = R_ADC_Open(0, ADC_MODE_SS_MULTI_CH, &config, MyCallback);
-        while (ADC_SUCCESS != adc_err)
-        {
-            /* Error - loop here for debug */
-        }
-
-        /* Enable channel */
-				                    
-		// ch_cfg.chan_mask = ADC_MASK_CH4;                     
-		ch_cfg.chan_mask = ADC_MASK_CH0|ADC_MASK_CH1|ADC_MASK_CH2|ADC_MASK_CH3; 
-		// ch_cfg.chan_mask = ADC_MASK_CH0; 
-		// select channel 0 1 2 3 (POT) (PDF r01an1666ej0301-rx p48)
-        ch_cfg.priority_groupa = ADC_GRPA_PRIORITY_OFF;      // group mode not used
-        ch_cfg.chan_mask_groupb = ADC_MASK_GROUPB_OFF;       // group mode not used
-        ch_cfg.add_mask = ADC_MASK_ADD_OFF;                  // no channels using addition
-        ch_cfg.diag_method = ADC_DIAG_OFF;                   // self-diagnosis off
-        ch_cfg.anex_enable = false;                          // no external amplifier
-        ch_cfg.sample_hold_mask = ADC_MASK_SAMPLE_HOLD_OFF;  // Bypass chnl-dedicated S&H circuits
-        ch_cfg.sample_hold_states = ADC_SST_SH_CNT_DEFAULT;  // default sample & hold states
-
-        adc_err = R_ADC_Control(0, ADC_CMD_ENABLE_CHANS, &ch_cfg);
-        while (ADC_SUCCESS != adc_err){
-        /* Error - loop here for debug */
-			printf("Hi");
-        }
-		
-}
-
-
-/*****************************************************************************
-* Function Name: MyCallback
-* Description  : This function is called at interrupt level when an ADC
-*                conversion completes.
-* Arguments    : pArgs -
-*                    pointer to adc_cb_args_t structure
-* Return Value : none
-******************************************************************************/
-void MyCallback(void *pArgs){
-    // adc_err_t adc_err;
-    adc_err_t adc_scan_err;
-    adc_err_t adc_err0;
-    adc_err_t adc_err1;
-    adc_err_t adc_err2;
-    adc_err_t adc_err3;
-    adc_cb_args_t *args = (adc_cb_args_t *)pArgs;
-
-    if ((0 == args->unit) && (ADC_EVT_SCAN_COMPLETE == args->event))
-    {
-        /* Read conversion value and store in global variable */
-		adc_err0 = R_ADC_Read(0, ADC_REG_CH0, &g_data0);   /*Use CH0*/
-		adc_err1 = R_ADC_Read(0, ADC_REG_CH1, &g_data1);   /*Use CH1*/
-		adc_err2 = R_ADC_Read(0, ADC_REG_CH2, &g_data2);   /*Use CH2*/
-		adc_err3 = R_ADC_Read(0, ADC_REG_CH3, &g_data3);   /*Use CH3*/
-		// adc_err = R_ADC_ReadAll(&g_data);   /*Read All*/
-        while (ADC_SUCCESS != adc_err0)
-        {
-            /* Error - loop here for debug */
-        }
-    }
-}
 
 /*****************************************************************************
 * Function Name: init_mtu0
@@ -579,7 +402,6 @@ void my_sci_callback_ch2(void *pArgs){
     if (args->event == SCI_EVT_RX_CHAR)
     {
         /* From RXI interrupt; received character data is in args->byte */
-        LED0 = ~LED0;         // Toggle LED to demonstrate callback execution.
         nop();
     }
     else if (args->event == SCI_EVT_RXBUF_OVFL)
@@ -616,7 +438,6 @@ void my_sci_callback_ch1(void *pArgs){
     if (args->event == SCI_EVT_RX_CHAR)
     {
         /* From RXI interrupt; received character data is in args->byte */
-        LED0 = ~LED0;         // Toggle LED to demonstrate callback execution.
         nop();
     }
     else if (args->event == SCI_EVT_RXBUF_OVFL)
@@ -684,44 +505,5 @@ static void Rx64MInitPorts(void){
         PORT2.PMR.BYTE |= 0x40;  // Set P26 mode to peripheral operation
         PORT2.PDR.BYTE |= 0x40;
 
-
-    /*For ADC*/
-		
-		/*Setting for P40 as AN000*/
-        MPC.P40PFS.BYTE = 0x80;     // Pin Func Select P40 AN000; POT on
-        PORT4.PDR.BIT.B0 = 0;       // set AN pin direction to input (default)
-        PORT4.PMR.BIT.B0 = 1;       // set AN pin mode to peripheral
-        R_BSP_RegisterProtectEnable(BSP_REG_PROTECT_MPC); // Re-lock the MPC register.
-		
-		/*Setting for P41 as AN001*/
-        MPC.P40PFS.BYTE = 0x80;     // Pin Func Select P41 AN001; POT on
-        PORT4.PDR.BIT.B1 = 0;       // set AN pin direction to input (default)
-        PORT4.PMR.BIT.B1 = 1;       // set AN pin mode to peripheral
-        R_BSP_RegisterProtectEnable(BSP_REG_PROTECT_MPC); // Re-lock the MPC register.
-		
-		/*Setting for P42 as AN002*/
-        MPC.P40PFS.BYTE = 0x80;     // Pin Func Select P42 AN002; POT on
-        PORT4.PDR.BIT.B2 = 0;       // set AN pin direction to input (default)
-        PORT4.PMR.BIT.B2 = 1;       // set AN pin mode to peripheral
-        R_BSP_RegisterProtectEnable(BSP_REG_PROTECT_MPC); // Re-lock the MPC register.
-		
-		/*Setting for P43 as AN003*/
-        MPC.P40PFS.BYTE = 0x80;     // Pin Func Select P43 AN003; POT on
-        PORT4.PDR.BIT.B3 = 0;       // set AN pin direction to input (default)
-        PORT4.PMR.BIT.B3 = 1;       // set AN pin mode to peripheral
-        R_BSP_RegisterProtectEnable(BSP_REG_PROTECT_MPC); // Re-lock the MPC register.
-
-        /*Setting for P44 as AN004*/
-        MPC.P44PFS.BYTE = 0x80;     // Pin Func Select P44 AN004; POT on
-        PORT4.PDR.BIT.B4 = 0;       // set AN pin direction to input (default)
-        PORT4.PMR.BIT.B4 = 1;       // set AN pin mode to peripheral
-        R_BSP_RegisterProtectEnable(BSP_REG_PROTECT_MPC); // Re-lock the MPC register.
-		
         return;
 }
-
-
-
-
-
-
