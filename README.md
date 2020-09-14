@@ -1,8 +1,7 @@
 # RX64M_valve
-## Function
-- [x] Water temperature trigger    
-- [x] Ambient temperature trigger  
-- [x] Water sensor offline detector  
-- [x] Ambient sensor offline detector  
-- [ ] AC On/Off detector  
-  
+## Board Function
+- [x] Water temperature trigger - Enabled  
+- [x] Ambient temperature trigger - Enabled  
+- [x] Water sensor offline detector - Enabled  
+- [x] Ambient sensor offline detector - Enabled  
+- [ ] AC On/Off detector - Disabled  
