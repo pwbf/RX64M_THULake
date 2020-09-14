@@ -157,95 +157,18 @@ void main(void){
 	uint8_t watchDog = 12000;
 	uint8_t rtnLen = 13;
 	uint8_t loop = 0;
-	
-	LED1_PDR = 1;
-	LED2_PDR = 1;
-	LED3_PDR = 1;
-	LED4_PDR = 1;
-	
+		
 	Rx64MInitPorts();
 	UARTInit();
 	LoRaJoin();
 	R_BSP_SoftwareDelay (1, BSP_DELAY_SECS);
 	
-	LED1=LED_OFF;
-	LED2=LED_OFF;
-	LED3=LED_OFF;
-	LED4=LED_OFF;
     	while (1){
-		tm = 0;
-		while(tm++ < 6){
-			count = 0;
-			printf("Send cmd to sensor\n");
-			sensorSend();
-			LED1=LED_ON;
-			R_BSP_SoftwareDelay (1, BSP_DELAY_SECS);
-			printf("Read sensor\n");
-	    		while (1){
-				sensorRead(0);
-				if(rtnData[12] != 0x00 || count++>=12000){
-					if(rtnData[12] != 0x00)
-						printf("\nGot it!\n");
-					else
-						printf("\nTimeout!\n");
-					break;
-				}
-			}
-			LED2=LED_ON;
-			
-			uint16_t phph = rtnData[3]<<8 | rtnData[4];
-			uint16_t dodo = rtnData[5]<<8 | rtnData[6];
-			uint16_t cond = rtnData[7]<<8 | rtnData[8];
-			uint16_t temp = rtnData[9]<<8 | rtnData[10];
-			
-			
-			printf("phph: %d\n",phph);
-			printf("dodo: %d\n",dodo);
-			printf("cond: %d\n",cond);
-			printf("temp: %d\n",temp);
-			
-			uint8_t phF = phph/100;
-			uint8_t phS = phph%100;
-			uint8_t doF = dodo/100;
-			uint8_t doS = dodo%100;
-			uint8_t coF = cond/1000;
-			uint8_t coS = cond%1000;
-			uint8_t teF = temp/100;
-			uint8_t teS = temp%100;
-			
-			printf("Pack command for LoRa\n");
-			sprintf(sendCMD,"mac tx ucnf 2 %02d%02d%02d%02d%01d%03d%02d%02d",
-			phF,phS,
-			doF,doS,
-			coF,coS,
-			teF,teS);
-			/*sprintf(sendCMD,"mac tx ucnf 2 %02x%02x%02x%02x%02x%02x%02x%02x",
-			rtnData[3],rtnData[4],
-			rtnData[5],rtnData[6],
-			rtnData[7],rtnData[8],
-			rtnData[9],rtnData[10]);*/
-			LED3=LED_ON;
-			printf("Flush buffer\n");
-	    		for(loop=0;loop<rtnLen;loop++)
-				rtnData[loop] = 0x00;
-			
-			LED4=LED_ON;	
-			R_BSP_SoftwareDelay (9, BSP_DELAY_SECS);
-		}
-    
-		LED1=LED_ON;
-		LED2=LED_ON;
-		LED3=LED_ON;
-		LED4=LED_ON;
 		printf("LoRa send\n");
-		rtnSend = R_SCI_Send(g_my_sci_handle_ch1,sendCMD,40);
+		rtnSend = R_SCI_Send(g_my_sci_handle_ch1,"mac tx ucnf 2 F",15);
 		R_BSP_SoftwareDelay (1, BSP_DELAY_SECS);
 		LORA_Recieve(rtnSend);
-    
-		LED1=LED_OFF;
-		LED2=LED_OFF;
-		LED3=LED_OFF;
-		LED4=LED_OFF;
+		break;
 	}
 }
 
