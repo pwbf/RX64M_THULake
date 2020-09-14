@@ -1,12 +1,38 @@
 ﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <MicomToolCommonProjectFile Version="1.00">
-  <CreatorType Name="CubeSuite+" Version="V8.03.00  [21 Nov 2019]" />
+  <CreatorType Name="CubeSuite+" Version="V8.04.00  [09 Jun 2020]" />
   <Placeholders>
     <PlaceholderPrefix>%</PlaceholderPrefix>
     <PlaceholderPostfix>%</PlaceholderPostfix>
   </Placeholders>
   <Project Name="thu_rx64m_rsk" Type="Application">
     <Files>
+      <Category Name="r_cmt_rx">
+        <Category Name="doc">
+          <Category Name="en" />
+          <Category Name="ja" />
+        </Category>
+        <Path>r_cmt_rx\readme.txt</Path>
+        <Category Name="ref">
+          <Path>r_cmt_rx\ref\r_cmt_rx_config_reference.h</Path>
+        </Category>
+        <Path>r_cmt_rx\r_cmt_rx_if.h</Path>
+        <Category Name="src">
+          <Path>r_cmt_rx\src\r_cmt_rx.c</Path>
+        </Category>
+      </Category>
+      <Category Name="r_byteq">
+        <Category Name="doc" />
+        <Path>r_byteq\readme.txt</Path>
+        <Category Name="ref">
+          <Path>r_byteq\ref\r_byteq_config_reference.h</Path>
+        </Category>
+        <Path>r_byteq\r_byteq_if.h</Path>
+        <Category Name="src">
+          <Path>r_byteq\src\r_byteq.c</Path>
+          <Path>r_byteq\src\r_byteq_private.h</Path>
+        </Category>
+      </Category>
       <Category Name="r_bsp">
         <Path>r_bsp\readme.txt</Path>
         <Category Name="board">
@@ -67,24 +93,6 @@
         </Category>
         <Path>r_bsp\platform.h</Path>
       </Category>
-      <Category Name="r_cmt_rx">
-        <Path>r_cmt_rx\readme.txt</Path>
-        <Category Name="doc">
-          <Category Name="en">
-            <Path>r_cmt_rx\doc\en\r01an1856ej0300-rx.pdf</Path>
-          </Category>
-          <Category Name="ja">
-            <Path>r_cmt_rx\doc\ja\r01an1856jj0300-rx.pdf</Path>
-          </Category>
-        </Category>
-        <Category Name="ref">
-          <Path>r_cmt_rx\ref\r_cmt_rx_config_reference.h</Path>
-        </Category>
-        <Category Name="src">
-          <Path>r_cmt_rx\src\r_cmt_rx.c</Path>
-        </Category>
-        <Path>r_cmt_rx\r_cmt_rx_if.h</Path>
-      </Category>
       <Category Name="r_config">
         <Path>r_config\r_bsp_config.h</Path>
         <Path>r_config\r_bsp_config_readme.txt</Path>
@@ -97,34 +105,6 @@
         <Path>r_config\r_sci_rx_config.h</Path>
         <Path>r_config\r_byteq_config.h</Path>
         <Path>r_config\r_s12ad_rx_config.h</Path>
-      </Category>
-      <Category Name="r_ether_rx">
-        <Path>r_ether_rx\readme.txt</Path>
-        <Category Name="doc">
-          <Category Name="en">
-            <Path>r_ether_rx\doc\en\r01an2009ej0112-rx-ether.pdf</Path>
-          </Category>
-          <Category Name="ja">
-            <Path>r_ether_rx\doc\ja\r01an2009jj0112-rx-ether.pdf</Path>
-          </Category>
-        </Category>
-        <Category Name="ref">
-          <Path>r_ether_rx\ref\r_ether_rx_config_reference.h</Path>
-        </Category>
-        <Category Name="src">
-          <Path>r_ether_rx\src\r_ether_rx.c</Path>
-          <Path>r_ether_rx\src\r_ether_rx_private.h</Path>
-          <Category Name="phy">
-            <Path>r_ether_rx\src\phy\phy.c</Path>
-            <Path>r_ether_rx\src\phy\phy.h</Path>
-          </Category>
-          <Category Name="targets">
-            <Category Name="rx64m">
-              <Path>r_ether_rx\src\targets\rx64m\r_ether_setting_rx64m.c</Path>
-            </Category>
-          </Category>
-        </Category>
-        <Path>r_ether_rx\r_ether_rx_if.h</Path>
       </Category>
       <Category Name="r_pincfg">
         <Path>r_pincfg\r_pinset.c</Path>
@@ -149,75 +129,9 @@
         </Category>
         <Path>r_sys_time_rx\r_sys_time_rx_if.h</Path>
       </Category>
-      <Category Name="r_t4_driver_rx">
-        <Path>r_t4_driver_rx\readme.txt</Path>
-        <Category Name="doc">
-          <Category Name="en">
-            <Path>r_t4_driver_rx\doc\en\r20an0311ej0106-rx-t4.pdf</Path>
-          </Category>
-          <Category Name="ja">
-            <Path>r_t4_driver_rx\doc\ja\r20an0311jj0106-rx-t4.pdf</Path>
-          </Category>
-        </Category>
-        <Category Name="ref">
-          <Path>r_t4_driver_rx\ref\r_t4_driver_rx_config_reference.h</Path>
-        </Category>
-        <Category Name="src">
-          <Path>r_t4_driver_rx\src\ether_callback.c</Path>
-          <Path>r_t4_driver_rx\src\t4_driver.c</Path>
-          <Path>r_t4_driver_rx\src\timer.c</Path>
-          <Path>r_t4_driver_rx\src\timer.h</Path>
-        </Category>
-      </Category>
-      <Category Name="r_t4_rx">
-        <Path>r_t4_rx\readme.txt</Path>
-        <Category Name="doc">
-          <Category Name="en">
-            <Path>r_t4_rx\doc\en\r20an0051ej0206-rx-t4.pdf</Path>
-            <Path>r_t4_rx\doc\en\r20uw0031ej0109-t4tiny.pdf</Path>
-            <Path>r_t4_rx\doc\en\r20uw0032ej0108-t4tiny.pdf</Path>
-          </Category>
-          <Category Name="ja">
-            <Path>r_t4_rx\doc\ja\r20an0051jj0206-rx-t4.pdf</Path>
-            <Path>r_t4_rx\doc\ja\r20uw0031jj0109-t4tiny.pdf</Path>
-            <Path>r_t4_rx\doc\ja\r20uw0032jj0108-t4tiny.pdf</Path>
-          </Category>
-        </Category>
-        <Category Name="lib">
-          <Path>r_t4_rx\lib\r_mw_version.h</Path>
-          <Path>r_t4_rx\lib\r_stdint.h</Path>
-          <Path>r_t4_rx\lib\r_t4_itcpip.h</Path>
-        </Category>
-        <Category Name="ref">
-          <Path>r_t4_rx\ref\r_t4_rx_config_reference.h</Path>
-        </Category>
-        <Category Name="src">
-          <Path>r_t4_rx\src\config_tcpudp.c</Path>
-        </Category>
-      </Category>
       <Category Name="src">
+        <Path>src\main_self.h</Path>
         <Path>src\main.c</Path>
-        <Category Name="tcp_blocking_sample">
-          <Path>src\tcp_blocking_sample\config_tcpudp.c</Path>
-          <Path>src\tcp_blocking_sample\echo_srv.c</Path>
-        </Category>
-        <Category Name="tcp_nonblocking_cancel_sample">
-          <Path>src\tcp_nonblocking_cancel_sample\config_tcpudp.c</Path>
-          <Path>src\tcp_nonblocking_cancel_sample\echo_srv.c</Path>
-        </Category>
-        <Category Name="tcp_nonblocking_sample">
-          <Path>src\tcp_nonblocking_sample\config_tcpudp.c</Path>
-          <Path>src\tcp_nonblocking_sample\echo_srv.c</Path>
-        </Category>
-        <Category Name="udp_blocking_sample">
-          <Path>src\udp_blocking_sample\config_tcpudp.c</Path>
-          <Path>src\udp_blocking_sample\echo_srv.c</Path>
-        </Category>
-        <Category Name="udp_nonblocking_sample">
-          <Path>src\udp_nonblocking_sample\config_tcpudp.c</Path>
-          <Path>src\udp_nonblocking_sample\echo_srv.c</Path>
-        </Category>
-        <Path>src\echo_srv_sample.h</Path>
         <Category Name="LoRa">
           <Path>src\LoRa\LoRa.h</Path>
         </Category>
@@ -253,53 +167,6 @@
           </Category>
         </Category>
       </Category>
-      <Category Name="r_byteq">
-        <Category Name="doc">
-          <Path>r_byteq\doc\r01an1683ej0160_rx.pdf</Path>
-        </Category>
-        <Path>r_byteq\readme.txt</Path>
-        <Category Name="ref">
-          <Path>r_byteq\ref\r_byteq_config_reference.h</Path>
-        </Category>
-        <Path>r_byteq\r_byteq_if.h</Path>
-        <Category Name="src">
-          <Path>r_byteq\src\r_byteq.c</Path>
-          <Path>r_byteq\src\r_byteq_private.h</Path>
-        </Category>
-      </Category>
-      <Category Name="r_s12ad_rx">
-        <Category Name="doc">
-          <Category Name="en">
-            <Path>r_s12ad_rx\doc\en\r01an1666ej0230-rx.pdf</Path>
-          </Category>
-          <Category Name="ja">
-            <Path>r_s12ad_rx\doc\ja\r01an1666jj0230-rx.pdf</Path>
-          </Category>
-        </Category>
-        <Path>r_s12ad_rx\readme.txt</Path>
-        <Category Name="ref">
-          <Path>r_s12ad_rx\ref\r_s12ad_rx_config_reference.h</Path>
-        </Category>
-        <Path>r_s12ad_rx\r_s12ad_rx_if.h</Path>
-        <Category Name="src">
-          <Path>r_s12ad_rx\src\r_s12ad_rx.c</Path>
-          <Path>r_s12ad_rx\src\r_s12ad_rx_private.h</Path>
-          <Category Name="targets">
-            <Category Name="rx63x">
-              <Path>r_s12ad_rx\src\targets\rx63x\r_s12ad_rx63x.c</Path>
-              <Path>r_s12ad_rx\src\targets\rx63x\r_s12ad_rx63x_if.h</Path>
-            </Category>
-            <Category Name="rx64m">
-              <Path>r_s12ad_rx\src\targets\rx64m\r_s12ad_rx64m.c</Path>
-              <Path>r_s12ad_rx\src\targets\rx64m\r_s12ad_rx64m_if.h</Path>
-            </Category>
-            <Category Name="rx65x">
-              <Path>r_s12ad_rx\src\targets\rx65x\r_s12ad_rx65x.c</Path>
-              <Path>r_s12ad_rx\src\targets\rx65x\r_s12ad_rx65x_if.h</Path>
-            </Category>
-          </Category>
-        </Category>
-      </Category>
     </Files>
     <DebugOptions>
       <ConnectSettings>
@@ -317,6 +184,7 @@
           <Option>-isa=rxv2</Option>
           <Option>-fpu</Option>
           <Option>-lang=c</Option>
+          <Option>-include=r_cmt_rx\ref</Option>
           <Option>-include=src\Sensor</Option>
           <Option>-include=src\LoRa</Option>
           <Option>-include=src</Option>
@@ -406,37 +274,17 @@
           <Path>DefaultBuild\mcu_interrupts.obj</Path>
           <Path>DefaultBuild\mcu_locks.obj</Path>
           <Path>DefaultBuild\mcu_mapped_interrupts.obj</Path>
-          <Path>DefaultBuild\r_cmt_rx.obj</Path>
-          <Path>DefaultBuild\r_ether_rx.obj</Path>
-          <Path>DefaultBuild\phy.obj</Path>
-          <Path>DefaultBuild\r_ether_setting_rx64m.obj</Path>
           <Path>DefaultBuild\r_pinset.obj</Path>
           <Path>DefaultBuild\r_sys_time_rx.obj</Path>
-          <Path>DefaultBuild\ether_callback.obj</Path>
-          <Path>DefaultBuild\t4_driver.obj</Path>
-          <Path>DefaultBuild\timer.obj</Path>
-          <Path>DefaultBuild\config_tcpudp.obj</Path>
           <Path>DefaultBuild\main.obj</Path>
-          <Path>DefaultBuild\config_tcpudp.obj</Path>
-          <Path>DefaultBuild\echo_srv.obj</Path>
-          <Path>DefaultBuild\config_tcpudp.obj</Path>
-          <Path>DefaultBuild\echo_srv.obj</Path>
-          <Path>DefaultBuild\config_tcpudp.obj</Path>
-          <Path>DefaultBuild\echo_srv.obj</Path>
-          <Path>DefaultBuild\config_tcpudp.obj</Path>
-          <Path>DefaultBuild\echo_srv.obj</Path>
-          <Path>DefaultBuild\config_tcpudp.obj</Path>
-          <Path>DefaultBuild\echo_srv.obj</Path>
           <Path>DefaultBuild\r_sci_rx.obj</Path>
           <Path>DefaultBuild\r_sci_rx64m.obj</Path>
           <Path>DefaultBuild\r_sci_rx64m_data.obj</Path>
           <Path>DefaultBuild\r_byteq.obj</Path>
-          <Path>DefaultBuild\r_s12ad_rx.obj</Path>
-          <Path>DefaultBuild\r_s12ad_rx63x.obj</Path>
-          <Path>DefaultBuild\r_s12ad_rx64m.obj</Path>
-          <Path>DefaultBuild\r_s12ad_rx65x.obj</Path>
+          <Path>DefaultBuild\r_cmt_rx.obj</Path>
         </LinkOrder>
         <CommonOptions>
+          <IncludePathForC>r_cmt_rx\ref</IncludePathForC>
           <IncludePathForC>src\Sensor</IncludePathForC>
           <IncludePathForC>src\LoRa</IncludePathForC>
           <IncludePathForC>src</IncludePathForC>
@@ -487,6 +335,7 @@
           <Option>-isa=rxv2</Option>
           <Option>-fpu</Option>
           <Option>-lang=c99</Option>
+          <Option>-include=r_cmt_rx\ref</Option>
           <Option>-include=src\Sensor</Option>
           <Option>-include=src\LoRa</Option>
           <Option>-include=src</Option>
@@ -537,7 +386,6 @@
           <Option>-debug</Option>
         </AssembleOptions>
         <LinkOptions>
-          <Option>-library=r_t4_rx\lib\T4_Library_rxv1_ether_little.lib</Option>
           <Option>-output=%ProjectName%.abs</Option>
           <Option>-vect=_undefined_interrupt_source_isr</Option>
           <Option>-list=%ProjectName%.map</Option>
@@ -560,15 +408,6 @@
           <Option>-nologo</Option>
           <GenerateMode>BuildOptionChanged</GenerateMode>
         </LibraryGenerateOptions>
-        <NoTargetFile Target="r_t4_rx\src\config_tcpudp.c" />
-        <NoTargetFile Target="src\tcp_nonblocking_cancel_sample\config_tcpudp.c" />
-        <NoTargetFile Target="src\tcp_nonblocking_cancel_sample\echo_srv.c" />
-        <NoTargetFile Target="src\tcp_nonblocking_sample\config_tcpudp.c" />
-        <NoTargetFile Target="src\tcp_nonblocking_sample\echo_srv.c" />
-        <NoTargetFile Target="src\udp_blocking_sample\config_tcpudp.c" />
-        <NoTargetFile Target="src\udp_blocking_sample\echo_srv.c" />
-        <NoTargetFile Target="src\udp_nonblocking_sample\config_tcpudp.c" />
-        <NoTargetFile Target="src\udp_nonblocking_sample\echo_srv.c" />
         <LinkOrder>
           <Path>HardwareDebug\dbsct.obj</Path>
           <Path>HardwareDebug\hwsetup.obj</Path>
@@ -585,28 +424,17 @@
           <Path>HardwareDebug\mcu_interrupts.obj</Path>
           <Path>HardwareDebug\mcu_locks.obj</Path>
           <Path>HardwareDebug\mcu_mapped_interrupts.obj</Path>
-          <Path>HardwareDebug\r_cmt_rx.obj</Path>
-          <Path>HardwareDebug\phy.obj</Path>
-          <Path>HardwareDebug\r_ether_rx.obj</Path>
-          <Path>HardwareDebug\r_ether_setting_rx64m.obj</Path>
           <Path>HardwareDebug\r_pinset.obj</Path>
           <Path>HardwareDebug\r_sys_time_rx.obj</Path>
-          <Path>HardwareDebug\ether_callback.obj</Path>
-          <Path>HardwareDebug\t4_driver.obj</Path>
-          <Path>HardwareDebug\timer.obj</Path>
           <Path>HardwareDebug\main.obj</Path>
-          <Path>HardwareDebug\echo_srv.obj</Path>
-          <Path>HardwareDebug\config_tcpudp.obj</Path>
           <Path>HardwareDebug\r_sci_rx.obj</Path>
           <Path>HardwareDebug\r_sci_rx64m.obj</Path>
           <Path>HardwareDebug\r_sci_rx64m_data.obj</Path>
           <Path>HardwareDebug\r_byteq.obj</Path>
-          <Path>HardwareDebug\r_s12ad_rx.obj</Path>
-          <Path>HardwareDebug\r_s12ad_rx63x.obj</Path>
-          <Path>HardwareDebug\r_s12ad_rx64m.obj</Path>
-          <Path>HardwareDebug\r_s12ad_rx65x.obj</Path>
+          <Path>HardwareDebug\r_cmt_rx.obj</Path>
         </LinkOrder>
         <CommonOptions>
+          <IncludePathForC>r_cmt_rx\ref</IncludePathForC>
           <IncludePathForC>src\Sensor</IncludePathForC>
           <IncludePathForC>src\LoRa</IncludePathForC>
           <IncludePathForC>src</IncludePathForC>

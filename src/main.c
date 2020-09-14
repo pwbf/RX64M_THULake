@@ -1,112 +1,29 @@
+#include "main_self.h"
 
-/*******************************************************************************
-* File Name     : main.c
-* Version       : 1.00
-* Device(s)     : RX family
-* Tool-Chain    : C/C++ Compiler Package for RX Family
-* OS            :
-* H/W Platform  : RX family board
-* Description   :
-* Operation     :
-*
-* Limitations   :
-******************************************************************************/
-/******************************************************************************
-* History       : DD.MM.YYYY Version Description
-*               : 2018.11.13 V1.00    First Release
-*               :
-*               :
-******************************************************************************/
+/*General Setting section start*/
+#define		WATCH_DOG		1500
+#define		RTN_LENGTH		13
+#define		TOTAL_POINT		7
+#define		SoftwareRST		TOTAL_POINT
 
-/******************************************************************************
-Typedef definitions
-******************************************************************************/
-#define ETHERNET_FUNCTION_ENABLE 0
+uint16_t	NULL_COUNTER	= 0;
+uint8_t		ROUND_TIMER		= 0;
+uint8_t		LOCAL_LOOP		= 0;
+uint8_t		POINT_LOC		= 1;
 
-/******************************************************************************
-Includes <System Includes> , "Project Includes"
-******************************************************************************/
-#include <stdio.h>
-#include <string.h>
-#include <stdbool.h>
-
-
-/*For SCI*/
-#include "r_sci_rx_if.h"        // The SCI module API interface file.
-#include "r_byteq_if.h"         // The BYTEQ module API interface file.
-#include "r_sci_rx_config.h"    // User configurable options for the SCI module
-
-/*For LoRa*/
-#include "LoRa.h"
-
-/*For Sensor*/
-#include "Sensor.h"
-
-// uint8_t sensorSenduint8(uint8_t func);
-// void sensorRead(uint8_t status);
-
-/******************************************************************************
-Exported global variables and functions (to be accessed by other files)
-******************************************************************************/
-void main(void);
-void init_mtu0(void);   			/*For ADC*/
-void MyCallback(void *pArgs);   	/*For ADC*/
-
-// uint8_t HLbyte(uint8_t HIGH, uint8_t LOW);
-
-/******************************************************************************
-Private global variables and functions
-******************************************************************************/
-
-/*For UART.Begin*/
-void my_sci_callback_ch1(void *pArgs);
-void my_sci_callback_ch2(void *pArgs);
-void my_sci_callback_ch7(void *pArgs);
-static void Rx64MInitPorts(void);
-static void UARTInit(void);
-
-/* Handle storage. Needs to persist as long as SCI calls are going to be made.*/
-static sci_hdl_t   g_my_sci_handle;
-static sci_hdl_t   g_my_sci_handle_ch1;		//For LoRa
-static sci_hdl_t   g_my_sci_handle_ch2;		//For Sensor
-/*For UART. End*/
-
-/*Custome global variable declaration end*/
-#define LED1            (PORTE.PODR.BIT.B1)
-#define LED1_PDR        (PORTE.PDR.BIT.B1)
-#define LED2            (PORTE.PODR.BIT.B2)
-#define LED2_PDR        (PORTE.PDR.BIT.B2)
-#define LED3            (PORTE.PODR.BIT.B3)
-#define LED3_PDR        (PORTE.PDR.BIT.B3)
-#define LED4            (PORTE.PODR.BIT.B4)
-#define LED4_PDR        (PORTE.PDR.BIT.B4)
-#define LED_ON          (0)
-#define LED_OFF         (1)
-
-#define DEBUG_MODE	(0)
-/******************************************************************************
-* Function Name : main
-* Declaration   : void main(void)
-* Description   : This function is main processing
-* Arguments     : none
-* Return value  : none
-******************************************************************************/
+/*General Setting section end*/
 
 uint8_t rtnSend = 0;
 uint8_t RecValue[1] = {0};
-uint8_t rtnData[13];
+uint8_t sensorData[RTN_LENGTH];
+uint8_t *psensorData = sensorData;
 uint8_t sendCMD[40];
 uint8_t *pValue = &RecValue;
-int rtnRecieve;
-void LORA_Recieve(uint8_t status);
+uint8_t rtnRecieve;
+uint8_t clacData[8] = {0};
+uint8_t *pclacData = clacData;
 
-void LoRaJoin(){
-	printf("Send: mac join abp\n");
-	rtnSend = R_SCI_Send(g_my_sci_handle_ch1,"mac join abp",12);
-	R_BSP_SoftwareDelay (1, BSP_DELAY_SECS);
-	LORA_Recieve(rtnSend);
-}
-
+uint64_t GLOBALCOUNTER = 0;
 
 void LORA_Recieve(uint8_t status){
 	*pValue = &RecValue;
@@ -124,7 +41,18 @@ void LORA_Recieve(uint8_t status){
 	}	
 }
 
-uint8_t sensorSend(){
+void LoRaJoin(void){
+	printf("Send: mac join abp\n");
+	
+	LED_LoRa_join = LED_OFF;
+	rtnSend = R_SCI_Send(g_my_sci_handle_ch1,"mac join abp",12);
+	R_BSP_SoftwareDelay (1, BSP_DELAY_SECS);
+	LORA_Recieve(rtnSend);
+	
+	LED_LoRa_join = LED_ON;
+}
+
+uint8_t sensorSend(void){
 	uint8_t cmd[8];
 	sprintf(cmd,"%c%c%c%c%c%c%c%c",SENS_ADDR,SENS_FUNC_READ,SENS_REG_READ_STARTH,SENS_REG_READ_STARTL,SENS_REG_COUNTH,SENS_REG_COUNTL,0x40,0x08);
 	R_SCI_Send(g_my_sci_handle_ch2,cmd,HOST_SEND_LENGTH);
@@ -137,8 +65,9 @@ void sensorRead(uint8_t status){
 	while(status == SCI_SUCCESS){
 		rtnRecieve = R_SCI_Receive(g_my_sci_handle_ch2,pValue,1);
 		if(rtnRecieve == SCI_SUCCESS){
-			rtnData[index++] = RecValue[0];
-			printf("0X%2x",RecValue[0]);
+			// sensorData[index++] = RecValue[0];
+			*(psensorData + index++) = RecValue[0];
+			printf("0x%02X ",RecValue[0]);
 		}
 		else{
 			index=0;
@@ -147,111 +76,118 @@ void sensorRead(uint8_t status){
 			break;
 		}
 		R_BSP_SoftwareDelay (100, BSP_DELAY_MILLISECS);
-	}	
+	}
+}
+
+void SoftwareReset(void){
+	LED7 = LED_ON;
+	R_BSP_SoftwareDelay(200, BSP_DELAY_MILLISECS);
+	LED7 = LED_OFF;
+	R_BSP_SoftwareDelay(200, BSP_DELAY_MILLISECS);
+	SYSTEM.PRCR.WORD = 0xA502;
+	SYSTEM.SWRR = 0xA501;
+	SYSTEM.PRCR.WORD = 0xA500;
 }
 
 
 void main(void){
-	uint8_t tm = 0;
-	uint8_t count = 0;
-	uint8_t watchDog = 12000;
-	uint8_t rtnLen = 13;
-	uint8_t loop = 0;
-	
-	LED1_PDR = 1;
-	LED2_PDR = 1;
-	LED3_PDR = 1;
-	LED4_PDR = 1;
-	
 	Rx64MInitPorts();
+	
+	LED_System = LED_ON;
+	LED_LoRa_join = LED_ON;
+	LED_LoRa_tx = LED_ON;
+	LED_LoRa_rx = LED_ON;
+	LED_Sens_tx = LED_ON;
+	LED_Sens_rx = LED_ON;
+	LED_work = LED_ON;
+	LED7 = LED_ON;
+	R_BSP_SoftwareDelay (500, BSP_DELAY_MILLISECS);
+	
+	LED_System = LED_OFF;
+	LED_LoRa_join = LED_OFF;
+	LED_LoRa_tx = LED_OFF;
+	LED_LoRa_rx = LED_OFF;
+	LED_Sens_tx = LED_OFF;
+	LED_Sens_rx = LED_OFF;
+	LED_work = LED_OFF;
+	LED7 = LED_OFF;
+	R_BSP_SoftwareDelay (500, BSP_DELAY_MILLISECS);
+	
 	UARTInit();
 	LoRaJoin();
-	R_BSP_SoftwareDelay (1, BSP_DELAY_SECS);
+	LED_System = LED_ON;
 	
-	LED1=LED_OFF;
-	LED2=LED_OFF;
-	LED3=LED_OFF;
-	LED4=LED_OFF;
-    	while (1){
-		tm = 0;
-		while(tm++ < 6){
-			count = 0;
+    while (1){
+		ROUND_TIMER = 0;
+		while(ROUND_TIMER++ < 6){
+			NULL_COUNTER = 0;
 			printf("Send cmd to sensor\n");
+				LED_Sens_tx = LED_ON;
 			sensorSend();
-			LED1=LED_ON;
 			R_BSP_SoftwareDelay (1, BSP_DELAY_SECS);
+				LED_Sens_tx = LED_OFF;
 			printf("Read sensor\n");
-	    		while (1){
+	    	while (1){
+				LED_Sens_rx = LED_ON;
 				sensorRead(0);
-				if(rtnData[12] != 0x00 || count++>=12000){
-					if(rtnData[12] != 0x00)
-						printf("\nGot it!\n");
-					else
-						printf("\nTimeout!\n");
+				if(*(psensorData + 2) == 0x08){
+					printf("\nGot it!\n");
 					break;
 				}
+				else{
+					if(++NULL_COUNTER >= WATCH_DOG){
+						printf("\nTimeout!\n");
+						break;
+					}
+					R_BSP_SoftwareDelay(10, BSP_DELAY_MILLISECS);
+					//printf("NULL_COUNTER = %d\n",NULL_COUNTER); //Time wait for sensor
+				}
 			}
-			LED2=LED_ON;
+			LED_Sens_rx = LED_OFF;
 			
-			uint16_t phph = rtnData[3]<<8 | rtnData[4];
-			uint16_t dodo = rtnData[5]<<8 | rtnData[6];
-			uint16_t cond = rtnData[7]<<8 | rtnData[8];
-			uint16_t temp = rtnData[9]<<8 | rtnData[10];
-			
-			
-			printf("phph: %d\n",phph);
-			printf("dodo: %d\n",dodo);
-			printf("cond: %d\n",cond);
-			printf("temp: %d\n",temp);
-			
-			uint8_t phF = phph/100;
-			uint8_t phS = phph%100;
-			uint8_t doF = dodo/100;
-			uint8_t doS = dodo%100;
-			uint8_t coF = cond/1000;
-			uint8_t coS = cond%1000;
-			uint8_t teF = temp/100;
-			uint8_t teS = temp%100;
+			printf("PH: %d(0x%04X)\n", mergePH, mergePH);
+			printf("DO: %d(0x%04X)\n", mergeDO, mergeDO);
+			printf("COND: %d(0x%04X)\n", mergeCO, mergeCO);
+			printf("TEMP: %d(0x%04X)\n", mergeTP, mergeTP);
 			
 			printf("Pack command for LoRa\n");
-			sprintf(sendCMD,"mac tx ucnf 2 %02d%02d%02d%02d%01d%03d%02d%02d",
-			phF,phS,
-			doF,doS,
-			coF,coS,
-			teF,teS);
-			/*sprintf(sendCMD,"mac tx ucnf 2 %02x%02x%02x%02x%02x%02x%02x%02x",
-			rtnData[3],rtnData[4],
-			rtnData[5],rtnData[6],
-			rtnData[7],rtnData[8],
-			rtnData[9],rtnData[10]);*/
-			LED3=LED_ON;
-			printf("Flush buffer\n");
-	    		for(loop=0;loop<rtnLen;loop++)
-				rtnData[loop] = 0x00;
+			sprintf(sendCMD,"mac tx ucnf 2 %02d%02d%02d%02d%02d%01d%03d%02d%02d",
+				POINT_LOC,
+				finalData_phF, finalData_phS,
+				finalData_doF, finalData_doS,
+				finalData_coF, finalData_coS,
+				finalData_tpF, finalData_tpS);
+				
+			printf("Reset flag\n");	
+			*(psensorData + 2) = 0x00;
 			
-			LED4=LED_ON;	
-			R_BSP_SoftwareDelay (9, BSP_DELAY_SECS);
+			/*printf("Flush buffer\n");
+			for(LOCAL_LOOP=0; LOCAL_LOOP < RTN_LENGTH; LOCAL_LOOP++)
+				sensorData[LOCAL_LOOP] = 0x00;
+			*/
+				LED_work = LED_ON;
+			R_BSP_SoftwareDelay (6, BSP_DELAY_SECS);
+				LED_work = LED_OFF;
 		}
     
-		LED1=LED_ON;
-		LED2=LED_ON;
-		LED3=LED_ON;
-		LED4=LED_ON;
-		printf("LoRa send\n");
+		printf("LoRa send ptLoc = %d\n",POINT_LOC);
+			LED_LoRa_tx = LED_ON;
 		rtnSend = R_SCI_Send(g_my_sci_handle_ch1,sendCMD,40);
 		R_BSP_SoftwareDelay (1, BSP_DELAY_SECS);
+			LED_LoRa_tx = LED_OFF;
+			LED_LoRa_rx = LED_ON;
 		LORA_Recieve(rtnSend);
-    
-		LED1=LED_OFF;
-		LED2=LED_OFF;
-		LED3=LED_OFF;
-		LED4=LED_OFF;
+	
+	if(POINT_LOC >= TOTAL_POINT){
+		POINT_LOC = 1;
+	}
+	else{
+		POINT_LOC++;
+	}	
+		printf("GLOBALCOUNTER = %d\n", ++GLOBALCOUNTER);
+			LED_LoRa_rx = LED_OFF;
 	}
 }
-
-/*****************************************************************************/
-/*Functions for . Begin*/
-/*****************************************************************************/
 
 
 /*****************************************************************************
@@ -302,16 +238,6 @@ void init_mtu0(void){
 
     MTU.TSTRA.BYTE = 0x01;      // Start counting on MTU0
 }
-
-/*****************************************************************************/
-/*Functions for ADC. End*/
-/*****************************************************************************/
-
-
-
-/*****************************************************************************/
-/*Functions for UART.Begin*/
-/*****************************************************************************/
 
 /*****************************************************************************
 * Function Name: SendSCIVersion
@@ -466,11 +392,6 @@ void my_sci_callback_ch1(void *pArgs){
     }
 }
 
-
-/*****************************************************************************/
-/*Functions for UART.End*/
-/*****************************************************************************/
-
 /*****************************************************************************
 * Function Name: sci_rx65N_init_ports
 * Description  : This function initializes the port pins associated with SCI
@@ -504,6 +425,15 @@ static void Rx64MInitPorts(void){
         MPC.P26PFS.BYTE = 0x0A;
         PORT2.PMR.BYTE |= 0x40;  // Set P26 mode to peripheral operation
         PORT2.PDR.BYTE |= 0x40;
-
+	
+	LED_System_PDR		= 0x1;
+	LED_LoRa_join_PDR	= 0x1;
+	LED_LoRa_tx_PDR		= 0x1;
+	LED_LoRa_rx_PDR		= 0x1;
+	LED_Sens_tx_PDR		= 0x1;
+	LED_Sens_rx_PDR		= 0x1;
+	LED_work_PDR		= 0x1;
+	LED7_PDR			= 0x1;
+	
         return;
 }
