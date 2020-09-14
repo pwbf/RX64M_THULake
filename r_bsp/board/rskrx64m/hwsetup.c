@@ -33,9 +33,29 @@ Includes   <System Includes> , "Project Includes"
 ***********************************************************************************************************************/
 /* I/O Register and board definitions */
 #include "platform.h"
-#include "r_ether_rx_if.h"
 #include "r_pinset.h"
 
+#define LED0		(PORTE.PODR.BIT.B1)
+#define LED1		(PORTE.PODR.BIT.B2)
+#define LED2		(PORTE.PODR.BIT.B3)
+#define LED3		(PORTE.PODR.BIT.B4)
+
+#define LED0_PDR	(PORTE.PDR.BIT.B1)
+#define LED1_PDR	(PORTE.PDR.BIT.B2)
+#define LED2_PDR	(PORTE.PDR.BIT.B3)
+#define LED3_PDR	(PORTE.PDR.BIT.B4)
+#define SW0_PDR		(PORT7.PDR.BIT.B4)
+#define SW1_PDR		(PORT7.PDR.BIT.B5)
+#define SW2_PDR		(PORTC.PDR.BIT.B2)
+#define SW3_PDR		(PORT7.PDR.BIT.B6)
+
+#define SW0_PMR		(PORT7.PMR.BIT.B4)
+#define SW1_PMR		(PORT7.PMR.BIT.B5)
+#define SW2_PMR		(PORTC.PMR.BIT.B2)
+#define SW3_PMR		(PORT7.PMR.BIT.B6)
+
+#define LED_ON          (0)
+#define LED_OFF         (1)
 /***********************************************************************************************************************
 Private global variables and functions
 ***********************************************************************************************************************/
@@ -86,11 +106,13 @@ static void output_ports_configure(void)
 
     /* Enable switches. */
     /* Set pins as inputs. */
+    SW0_PDR = 0;
     SW1_PDR = 0;
     SW2_PDR = 0;
     SW3_PDR = 0;
 
     /* Set port mode registers for switches. */
+    SW0_PMR = 0;
     SW1_PMR = 0;
     SW2_PMR = 0;
     SW3_PMR = 0;

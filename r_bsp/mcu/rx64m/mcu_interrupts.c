@@ -570,22 +570,22 @@ void group_bl0_handler_isr (void)
 
     if (1 == ICU.GRPBL0.BIT.IS26)
     {
-        R_BSP_InterruptControl(BSP_INT_SRC_BL0_CAC_FERRF, BSP_INT_CMD_CALL_CALLBACK, FIT_NO_PTR);
+        R_BSP_InterruptControl(BSP_INT_SRC_BL0_CAC_FERRI, BSP_INT_CMD_CALL_CALLBACK, FIT_NO_PTR);
     }
 
     if (1 == ICU.GRPBL0.BIT.IS27)
     {
-        R_BSP_InterruptControl(BSP_INT_SRC_BL0_CAC_MENDF, BSP_INT_CMD_CALL_CALLBACK, FIT_NO_PTR);
+        R_BSP_InterruptControl(BSP_INT_SRC_BL0_CAC_MENDI, BSP_INT_CMD_CALL_CALLBACK, FIT_NO_PTR);
     }
 
     if (1 == ICU.GRPBL0.BIT.IS28)
     {
-        R_BSP_InterruptControl(BSP_INT_SRC_BL0_CAC_OVFF, BSP_INT_CMD_CALL_CALLBACK, FIT_NO_PTR);
+        R_BSP_InterruptControl(BSP_INT_SRC_BL0_CAC_OVFI, BSP_INT_CMD_CALL_CALLBACK, FIT_NO_PTR);
     }
 
     if (1 == ICU.GRPBL0.BIT.IS29)
     {
-        R_BSP_InterruptControl(BSP_INT_SRC_BL0_DOC_DOPCF, BSP_INT_CMD_CALL_CALLBACK, FIT_NO_PTR);
+        R_BSP_InterruptControl(BSP_INT_SRC_BL0_DOC_DOPCI, BSP_INT_CMD_CALL_CALLBACK, FIT_NO_PTR);
     }
 
     if (1 == ICU.GRPBL0.BIT.IS30)
