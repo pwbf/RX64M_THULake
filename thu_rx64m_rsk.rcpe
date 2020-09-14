@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <MicomToolCommonProjectFile Version="1.00">
-  <CreatorType Name="CubeSuite+" Version="V7.00.00  [13 Jun 2018]" />
+  <CreatorType Name="CubeSuite+" Version="V8.02.00  [07 Jun 2019]" />
   <Placeholders>
     <PlaceholderPrefix>%</PlaceholderPrefix>
     <PlaceholderPostfix>%</PlaceholderPostfix>
@@ -8,13 +8,13 @@
   <Project Name="thu_rx64m_rsk" Type="Application">
     <Files>
       <Category Name="r_bsp">
-        <Path>r_bsp\platform.h</Path>
         <Path>r_bsp\readme.txt</Path>
         <Category Name="board">
           <Category Name="rskrx64m">
             <Path>r_bsp\board\rskrx64m\dbsct.c</Path>
             <Path>r_bsp\board\rskrx64m\hwsetup.c</Path>
             <Path>r_bsp\board\rskrx64m\hwsetup.h</Path>
+            <Path>r_bsp\board\rskrx64m\lowlvl.c</Path>
             <Path>r_bsp\board\rskrx64m\lowsrc.c</Path>
             <Path>r_bsp\board\rskrx64m\lowsrc.h</Path>
             <Path>r_bsp\board\rskrx64m\r_bsp.h</Path>
@@ -25,7 +25,6 @@
             <Path>r_bsp\board\rskrx64m\sbrk.c</Path>
             <Path>r_bsp\board\rskrx64m\vecttbl.c</Path>
             <Path>r_bsp\board\rskrx64m\vecttbl.h</Path>
-            <Path>r_bsp\board\rskrx64m\lowlvl.c</Path>
           </Category>
           <Category Name="user">
             <Path>r_bsp\board\user\r_bsp.h</Path>
@@ -66,9 +65,9 @@
             </Category>
           </Category>
         </Category>
+        <Path>r_bsp\platform.h</Path>
       </Category>
       <Category Name="r_cmt_rx">
-        <Path>r_cmt_rx\r_cmt_rx_if.h</Path>
         <Path>r_cmt_rx\readme.txt</Path>
         <Category Name="doc">
           <Category Name="en">
@@ -84,6 +83,7 @@
         <Category Name="src">
           <Path>r_cmt_rx\src\r_cmt_rx.c</Path>
         </Category>
+        <Path>r_cmt_rx\r_cmt_rx_if.h</Path>
       </Category>
       <Category Name="r_config">
         <Path>r_config\r_bsp_config.h</Path>
@@ -99,7 +99,6 @@
         <Path>r_config\r_s12ad_rx_config.h</Path>
       </Category>
       <Category Name="r_ether_rx">
-        <Path>r_ether_rx\r_ether_rx_if.h</Path>
         <Path>r_ether_rx\readme.txt</Path>
         <Category Name="doc">
           <Category Name="en">
@@ -125,13 +124,13 @@
             </Category>
           </Category>
         </Category>
+        <Path>r_ether_rx\r_ether_rx_if.h</Path>
       </Category>
       <Category Name="r_pincfg">
         <Path>r_pincfg\r_pinset.c</Path>
         <Path>r_pincfg\r_pinset.h</Path>
       </Category>
       <Category Name="r_sys_time_rx">
-        <Path>r_sys_time_rx\r_sys_time_rx_if.h</Path>
         <Path>r_sys_time_rx\readme.txt</Path>
         <Category Name="doc">
           <Category Name="en">
@@ -148,6 +147,7 @@
           <Path>r_sys_time_rx\src\r_sys_time_rx.c</Path>
           <Path>r_sys_time_rx\src\r_sys_time_rx_private.h</Path>
         </Category>
+        <Path>r_sys_time_rx\r_sys_time_rx_if.h</Path>
       </Category>
       <Category Name="r_t4_driver_rx">
         <Path>r_t4_driver_rx\readme.txt</Path>
@@ -196,11 +196,33 @@
         </Category>
       </Category>
       <Category Name="src">
-        <Path>src\tcpip_srv.h</Path>
         <Path>src\main.c</Path>
-        <Category Name="tcpip_srv">
+        <Category Name="tcp_blocking_sample">
           <Path>src\tcp_blocking_sample\config_tcpudp.c</Path>
-          <Path>src\tcp_blocking_sample\tcpip_srv.c</Path>
+          <Path>src\tcp_blocking_sample\echo_srv.c</Path>
+        </Category>
+        <Category Name="tcp_nonblocking_cancel_sample">
+          <Path>src\tcp_nonblocking_cancel_sample\config_tcpudp.c</Path>
+          <Path>src\tcp_nonblocking_cancel_sample\echo_srv.c</Path>
+        </Category>
+        <Category Name="tcp_nonblocking_sample">
+          <Path>src\tcp_nonblocking_sample\config_tcpudp.c</Path>
+          <Path>src\tcp_nonblocking_sample\echo_srv.c</Path>
+        </Category>
+        <Category Name="udp_blocking_sample">
+          <Path>src\udp_blocking_sample\config_tcpudp.c</Path>
+          <Path>src\udp_blocking_sample\echo_srv.c</Path>
+        </Category>
+        <Category Name="udp_nonblocking_sample">
+          <Path>src\udp_nonblocking_sample\config_tcpudp.c</Path>
+          <Path>src\udp_nonblocking_sample\echo_srv.c</Path>
+        </Category>
+        <Path>src\echo_srv_sample.h</Path>
+        <Category Name="LoRa">
+          <Path>src\LoRa\LoRa.h</Path>
+        </Category>
+        <Category Name="Sensor">
+          <Path>src\Sensor\Sensor.h</Path>
         </Category>
       </Category>
       <Path>ProjectConvertInformation_rx64m_rsk.txt</Path>
@@ -286,7 +308,7 @@
       <DebugToolSettings />
     </DebugOptions>
     <Device Series="RX">R5F564MLCxFC</Device>
-    <BuildOptions Name="CC-RX" Version="V2.08.00">
+    <BuildOptions Name="CC-RX" Version="V3.01.00">
       <BuildMode Name="DefaultBuild" Active="False">
         <GeneralOptions>
           <SimultaneouslyBuild>true</SimultaneouslyBuild>
@@ -295,6 +317,18 @@
           <Option>-isa=rxv2</Option>
           <Option>-fpu</Option>
           <Option>-lang=c</Option>
+          <Option>-include=src\Sensor</Option>
+          <Option>-include=src\LoRa</Option>
+          <Option>-include=src</Option>
+          <Option>-include=r_sys_time_rx</Option>
+          <Option>-include=r_cmt_rx</Option>
+          <Option>-include=r_pincfg</Option>
+          <Option>-include=r_ether_rx</Option>
+          <Option>-include=r_t4_rx\lib</Option>
+          <Option>-include=r_bsp</Option>
+          <Option>-include=DSP\src</Option>
+          <Option>-include=DSP\dsplib-rxv2</Option>
+          <Option>-include=DSP\generate</Option>
           <Option>-include=r_s12ad_rx\src\targets\rx65x</Option>
           <Option>-include=r_s12ad_rx\src\targets\rx64m</Option>
           <Option>-include=r_s12ad_rx\src\targets\rx63x</Option>
@@ -332,6 +366,7 @@
           <Option>-fpu</Option>
           <Option>-output=%BuildModeName%\%FileLeaf%.obj</Option>
           <Option>-nologo</Option>
+          <Option>-debug</Option>
         </AssembleOptions>
         <LinkOptions>
           <Option>-output=%BuildModeName%\%ProjectName%.abs</Option>
@@ -357,6 +392,7 @@
         <LinkOrder>
           <Path>DefaultBuild\dbsct.obj</Path>
           <Path>DefaultBuild\hwsetup.obj</Path>
+          <Path>DefaultBuild\lowlvl.obj</Path>
           <Path>DefaultBuild\lowsrc.obj</Path>
           <Path>DefaultBuild\resetprg.obj</Path>
           <Path>DefaultBuild\sbrk.obj</Path>
@@ -381,7 +417,15 @@
           <Path>DefaultBuild\config_tcpudp.obj</Path>
           <Path>DefaultBuild\main.obj</Path>
           <Path>DefaultBuild\config_tcpudp.obj</Path>
-          <Path>DefaultBuild\tcpip_srv.obj</Path>
+          <Path>DefaultBuild\echo_srv.obj</Path>
+          <Path>DefaultBuild\config_tcpudp.obj</Path>
+          <Path>DefaultBuild\echo_srv.obj</Path>
+          <Path>DefaultBuild\config_tcpudp.obj</Path>
+          <Path>DefaultBuild\echo_srv.obj</Path>
+          <Path>DefaultBuild\config_tcpudp.obj</Path>
+          <Path>DefaultBuild\echo_srv.obj</Path>
+          <Path>DefaultBuild\config_tcpudp.obj</Path>
+          <Path>DefaultBuild\echo_srv.obj</Path>
           <Path>DefaultBuild\r_sci_rx.obj</Path>
           <Path>DefaultBuild\r_sci_rx64m.obj</Path>
           <Path>DefaultBuild\r_sci_rx64m_data.obj</Path>
@@ -390,9 +434,20 @@
           <Path>DefaultBuild\r_s12ad_rx63x.obj</Path>
           <Path>DefaultBuild\r_s12ad_rx64m.obj</Path>
           <Path>DefaultBuild\r_s12ad_rx65x.obj</Path>
-          <Path>DefaultBuild\lowlvl.obj</Path>
         </LinkOrder>
         <CommonOptions>
+          <IncludePathForC>src\Sensor</IncludePathForC>
+          <IncludePathForC>src\LoRa</IncludePathForC>
+          <IncludePathForC>src</IncludePathForC>
+          <IncludePathForC>r_sys_time_rx</IncludePathForC>
+          <IncludePathForC>r_cmt_rx</IncludePathForC>
+          <IncludePathForC>r_pincfg</IncludePathForC>
+          <IncludePathForC>r_ether_rx</IncludePathForC>
+          <IncludePathForC>r_t4_rx\lib</IncludePathForC>
+          <IncludePathForC>r_bsp</IncludePathForC>
+          <IncludePathForC>DSP\src</IncludePathForC>
+          <IncludePathForC>DSP\dsplib-rxv2</IncludePathForC>
+          <IncludePathForC>DSP\generate</IncludePathForC>
           <IncludePathForC>r_s12ad_rx\src\targets\rx65x</IncludePathForC>
           <IncludePathForC>r_s12ad_rx\src\targets\rx64m</IncludePathForC>
           <IncludePathForC>r_s12ad_rx\src\targets\rx63x</IncludePathForC>
@@ -431,6 +486,15 @@
           <Option>-isa=rxv2</Option>
           <Option>-fpu</Option>
           <Option>-lang=c99</Option>
+          <Option>-include=src\Sensor</Option>
+          <Option>-include=src\LoRa</Option>
+          <Option>-include=src</Option>
+          <Option>-include=r_sys_time_rx</Option>
+          <Option>-include=r_cmt_rx</Option>
+          <Option>-include=r_pincfg</Option>
+          <Option>-include=r_ether_rx</Option>
+          <Option>-include=r_t4_rx\lib</Option>
+          <Option>-include=r_bsp</Option>
           <Option>-include=r_s12ad_rx\src\targets\rx65x</Option>
           <Option>-include=r_s12ad_rx\src\targets\rx64m</Option>
           <Option>-include=r_s12ad_rx\src\targets\rx63x</Option>
@@ -441,21 +505,7 @@
           <Option>-include=r_byteq\ref</Option>
           <Option>-include=r_byteq</Option>
           <Option>-include=r_config</Option>
-          <Option>-include=r_sci_rx\src\targets\rx71m</Option>
-          <Option>-include=r_sci_rx\src\targets\rx65n</Option>
           <Option>-include=r_sci_rx\src\targets\rx64m</Option>
-          <Option>-include=r_sci_rx\src\targets\rx63n</Option>
-          <Option>-include=r_sci_rx\src\targets\rx631</Option>
-          <Option>-include=r_sci_rx\src\targets\rx24u</Option>
-          <Option>-include=r_sci_rx\src\targets\rx24t</Option>
-          <Option>-include=r_sci_rx\src\targets\rx23t</Option>
-          <Option>-include=r_sci_rx\src\targets\rx231</Option>
-          <Option>-include=r_sci_rx\src\targets\rx230</Option>
-          <Option>-include=r_sci_rx\src\targets\rx210</Option>
-          <Option>-include=r_sci_rx\src\targets\rx130</Option>
-          <Option>-include=r_sci_rx\src\targets\rx113</Option>
-          <Option>-include=r_sci_rx\src\targets\rx111</Option>
-          <Option>-include=r_sci_rx\src\targets\rx110</Option>
           <Option>-include=r_sci_rx\src</Option>
           <Option>-include=r_sci_rx\ref</Option>
           <Option>-include=r_sci_rx</Option>
@@ -482,13 +532,13 @@
           <Option>-fpu</Option>
           <Option>-output=%ConfigDir%\%FileLeaf%.obj</Option>
           <Option>-nologo</Option>
+          <Option>-debug</Option>
         </AssembleOptions>
         <LinkOptions>
-          <Option>-library=%ProjectFolder%/../%ProjectName%/r_t4_rx/lib/T4_Library_rxv1_ether_little.lib</Option>
+          <Option>-library=r_t4_rx\lib\T4_Library_rxv1_ether_little.lib</Option>
           <Option>-output=%ProjectName%.abs</Option>
           <Option>-vect=_undefined_interrupt_source_isr</Option>
           <Option>-list=%ProjectName%.map</Option>
-          <Option>-nooptimize</Option>
           <Option>-start=B_ETHERNET_BUFFERS_1,B_RX_DESC_1,B_TX_DESC_1,SU,SI,B_1,R_1,B_2,R_2,B,R/0100,C_1,C_2,C,C$*,D*,W*,L,P*/0FFC00000,EXCEPTVECT/0FFFFFF80,RESETVECT/0FFFFFFFC</Option>
           <Option>-rom=D=R,D_1=R_1,D_2=R_2</Option>
           <Option>-end</Option>
@@ -509,9 +559,18 @@
           <GenerateMode>BuildOptionChanged</GenerateMode>
         </LibraryGenerateOptions>
         <NoTargetFile Target="r_t4_rx\src\config_tcpudp.c" />
+        <NoTargetFile Target="src\tcp_nonblocking_cancel_sample\config_tcpudp.c" />
+        <NoTargetFile Target="src\tcp_nonblocking_cancel_sample\echo_srv.c" />
+        <NoTargetFile Target="src\tcp_nonblocking_sample\config_tcpudp.c" />
+        <NoTargetFile Target="src\tcp_nonblocking_sample\echo_srv.c" />
+        <NoTargetFile Target="src\udp_blocking_sample\config_tcpudp.c" />
+        <NoTargetFile Target="src\udp_blocking_sample\echo_srv.c" />
+        <NoTargetFile Target="src\udp_nonblocking_sample\config_tcpudp.c" />
+        <NoTargetFile Target="src\udp_nonblocking_sample\echo_srv.c" />
         <LinkOrder>
           <Path>HardwareDebug\dbsct.obj</Path>
           <Path>HardwareDebug\hwsetup.obj</Path>
+          <Path>HardwareDebug\lowlvl.obj</Path>
           <Path>HardwareDebug\lowsrc.obj</Path>
           <Path>HardwareDebug\resetprg.obj</Path>
           <Path>HardwareDebug\sbrk.obj</Path>
@@ -534,7 +593,7 @@
           <Path>HardwareDebug\t4_driver.obj</Path>
           <Path>HardwareDebug\timer.obj</Path>
           <Path>HardwareDebug\main.obj</Path>
-          <Path>HardwareDebug\tcpip_srv.obj</Path>
+          <Path>HardwareDebug\echo_srv.obj</Path>
           <Path>HardwareDebug\config_tcpudp.obj</Path>
           <Path>HardwareDebug\r_sci_rx.obj</Path>
           <Path>HardwareDebug\r_sci_rx64m.obj</Path>
@@ -544,9 +603,17 @@
           <Path>HardwareDebug\r_s12ad_rx63x.obj</Path>
           <Path>HardwareDebug\r_s12ad_rx64m.obj</Path>
           <Path>HardwareDebug\r_s12ad_rx65x.obj</Path>
-          <Path>HardwareDebug\lowlvl.obj</Path>
         </LinkOrder>
         <CommonOptions>
+          <IncludePathForC>src\Sensor</IncludePathForC>
+          <IncludePathForC>src\LoRa</IncludePathForC>
+          <IncludePathForC>src</IncludePathForC>
+          <IncludePathForC>r_sys_time_rx</IncludePathForC>
+          <IncludePathForC>r_cmt_rx</IncludePathForC>
+          <IncludePathForC>r_pincfg</IncludePathForC>
+          <IncludePathForC>r_ether_rx</IncludePathForC>
+          <IncludePathForC>r_t4_rx\lib</IncludePathForC>
+          <IncludePathForC>r_bsp</IncludePathForC>
           <IncludePathForC>r_s12ad_rx\src\targets\rx65x</IncludePathForC>
           <IncludePathForC>r_s12ad_rx\src\targets\rx64m</IncludePathForC>
           <IncludePathForC>r_s12ad_rx\src\targets\rx63x</IncludePathForC>
@@ -557,21 +624,7 @@
           <IncludePathForC>r_byteq\ref</IncludePathForC>
           <IncludePathForC>r_byteq</IncludePathForC>
           <IncludePathForC>r_config</IncludePathForC>
-          <IncludePathForC>r_sci_rx\src\targets\rx71m</IncludePathForC>
-          <IncludePathForC>r_sci_rx\src\targets\rx65n</IncludePathForC>
           <IncludePathForC>r_sci_rx\src\targets\rx64m</IncludePathForC>
-          <IncludePathForC>r_sci_rx\src\targets\rx63n</IncludePathForC>
-          <IncludePathForC>r_sci_rx\src\targets\rx631</IncludePathForC>
-          <IncludePathForC>r_sci_rx\src\targets\rx24u</IncludePathForC>
-          <IncludePathForC>r_sci_rx\src\targets\rx24t</IncludePathForC>
-          <IncludePathForC>r_sci_rx\src\targets\rx23t</IncludePathForC>
-          <IncludePathForC>r_sci_rx\src\targets\rx231</IncludePathForC>
-          <IncludePathForC>r_sci_rx\src\targets\rx230</IncludePathForC>
-          <IncludePathForC>r_sci_rx\src\targets\rx210</IncludePathForC>
-          <IncludePathForC>r_sci_rx\src\targets\rx130</IncludePathForC>
-          <IncludePathForC>r_sci_rx\src\targets\rx113</IncludePathForC>
-          <IncludePathForC>r_sci_rx\src\targets\rx111</IncludePathForC>
-          <IncludePathForC>r_sci_rx\src\targets\rx110</IncludePathForC>
           <IncludePathForC>r_sci_rx\src</IncludePathForC>
           <IncludePathForC>r_sci_rx\ref</IncludePathForC>
           <IncludePathForC>r_sci_rx</IncludePathForC>

@@ -42,10 +42,6 @@
 /***********************************************************************************************************************
 Configuration Options
 ***********************************************************************************************************************/
-
-
-
-
 /* Enter the product part number for your MCU. This information will be used to obtain information about your MCU such 
    as package and memory size. 
    To help parse this information, the part number will be defined using multiple macros.
@@ -75,15 +71,12 @@ Configuration Options
 */
 #define BSP_CFG_MCU_PART_PACKAGE        (0x0)
 
-
-
 /* Whether Encryption and SDHI are included or not. 
    Character(s) = Value for macro = Description
    D            = false           = Encryption not included, SDHI module included
    H            = true            = Encryption included, SDHI module included
 */
 #define BSP_CFG_MCU_PART_ENCRYPTION_INCLUDED   (true)
-
 
 /* ROM, RAM, and Data Flash Capacity. 
    Character(s) = Value for macro = ROM Size/Ram Size/Data Flash Size
@@ -105,10 +98,6 @@ Configuration Options
    56           = 0x0             = RX600 Series
 */  
 #define BSP_CFG_MCU_PART_SERIES         (0x0)
-
-
-
-//-------------------------------------------------------------------------------------//
 
 /* Memory type. 
    Character(s) = Value for macro = Description
@@ -136,8 +125,7 @@ Configuration Options
     /* If only 1 stack is chosen using BSP_CFG_USER_STACK_ENABLE then no RAM will be allocated for the user stack. */
     #if (BSP_CFG_USER_STACK_ENABLE == 1)
     /* User Stack size in bytes. The Renesas RX toolchain sets the stack size using the #pragma stacksize directive. */
-    //#pragma stacksize su=0x1000
-    #pragma stacksize su=0x4b000  /*300K*/	
+    #pragma stacksize su=0x1000
     #endif
 
 /* Interrupt Stack size in bytes. The Renesas RX toolchain sets the stack size using the #pragma stacksize directive.
@@ -157,9 +145,6 @@ Configuration Options
       stdio.h. 
 */
 #define BSP_CFG_HEAP_BYTES              (0x400)
-
-//-------------------------------------------------------------------------------------//
-
 
 /* Initializes C input & output library functions.
    0 = Disable I/O library initialization in resetprg.c. If you are not using stdio then use this value.

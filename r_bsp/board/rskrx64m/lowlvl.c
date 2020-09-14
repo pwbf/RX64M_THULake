@@ -70,7 +70,6 @@ Exported global variables (to be accessed by other files)
 Private global variables and functions
 ***********************************************************************************************************************/
 
-
 /***********************************************************************************************************************
 * Function Name: charput
 * Description  : Outputs a character on a serial port
@@ -110,7 +109,3 @@ uint32_t charget (void)
     return E1_DBG_PORT.RX_DATA;
 #endif
 }
-
-
-
-
