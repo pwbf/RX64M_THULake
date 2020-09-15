@@ -45,7 +45,7 @@ static sci_hdl_t   g_my_sci_handle_ch2;		//For Sensor
 
 /*Custome global variable declaration end*/
 #define LED_System				(PORTE.PODR.BIT.B0)
-#define LED_LoRa_join			(PORTE.PODR.BIT.B1)
+#define LED_LoRa_join			        (PORTE.PODR.BIT.B1)
 #define LED_LoRa_tx				(PORTE.PODR.BIT.B2)
 #define LED_LoRa_rx				(PORTE.PODR.BIT.B3)
 #define LED_Sens_tx				(PORTE.PODR.BIT.B4)
@@ -54,7 +54,7 @@ static sci_hdl_t   g_my_sci_handle_ch2;		//For Sensor
 #define LED7					(PORTE.PODR.BIT.B7)
 
 #define LED_System_PDR			(PORTE.PDR.BIT.B0)
-#define LED_LoRa_join_PDR       (PORTE.PDR.BIT.B1)
+#define LED_LoRa_join_PDR               (PORTE.PDR.BIT.B1)
 #define LED_LoRa_tx_PDR 		(PORTE.PDR.BIT.B2)
 #define LED_LoRa_rx_PDR			(PORTE.PDR.BIT.B3)
 #define LED_Sens_tx_PDR			(PORTE.PDR.BIT.B4)

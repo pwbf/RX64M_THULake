@@ -25,6 +25,28 @@ uint8_t *pclacData = clacData;
 
 uint64_t GLOBALCOUNTER = 0;
 
+void LED(int x,int y,int z,int a,int b){
+     if(x==1 && y==0 && z==0 && a==0 && b==0){
+	     return LED_LoRa_join=LED_ON;
+     }
+     else if(x==0 && y==1 && z==0 && a==0 && b==0){
+	     return LED_LoRa_tx=LED_ON;
+     }
+     else if(x==0 && y==0 && z==1 && a==0 && b==0){
+	     return LED_LoRa_rx=LED_ON;
+     }
+     else if(x==0 && y==0 && z==0 && a==1 && b==0){
+	     return LED_Sens_tx=LED_ON;
+     }
+     else if(x==0 && y==0 && z==0 && a==0 && b==1){
+	     return LED_Sens_rx=LED_ON;
+     }
+     else if(x==0 && y==0 && z==0 && a==0 && b==0){
+	     return LED_LoRa_join = LED_LoRa_tx = LED_LoRa_rx = LED_Sens_tx = LED_Sens_rx = LED_OFF;
+	     
+     }
+}
+
 void LORA_Recieve(uint8_t status){
 	*pValue = &RecValue;
 	printf("Send Status=0x%02X\n",status);
@@ -94,27 +116,22 @@ void main(void){
 	Rx64MInitPorts();
 	
 	LED_System = LED_ON;
-	LED_LoRa_join = LED_ON;
-	LED_LoRa_tx = LED_ON;
-	LED_LoRa_rx = LED_ON;
-	LED_Sens_tx = LED_ON;
-	LED_Sens_rx = LED_ON;
-	LED_work = LED_ON;
+        LED_work = LED_ON;
 	LED7 = LED_ON;
 	R_BSP_SoftwareDelay (500, BSP_DELAY_MILLISECS);
 	
 	LED_System = LED_OFF;
-	LED_LoRa_join = LED_OFF;
-	LED_LoRa_tx = LED_OFF;
-	LED_LoRa_rx = LED_OFF;
-	LED_Sens_tx = LED_OFF;
-	LED_Sens_rx = LED_OFF;
 	LED_work = LED_OFF;
 	LED7 = LED_OFF;
 	R_BSP_SoftwareDelay (500, BSP_DELAY_MILLISECS);
 	
 	UARTInit();
 	LoRaJoin();
+	
+	LED(1,0,0,0,0);                          //LoRa Join
+	R_BSP_SoftwareDelay (1, BSP_DELAY_SECS);
+	LED(0,0,0,0,0);
+	
 	LED_System = LED_ON;
 	
     while (1){
@@ -122,13 +139,13 @@ void main(void){
 		while(ROUND_TIMER++ < 6){
 			NULL_COUNTER = 0;
 			printf("Send cmd to sensor\n");
-				LED_Sens_tx = LED_ON;
+			LED(0,0,0,1,0);                           //sensor TX
 			sensorSend();
 			R_BSP_SoftwareDelay (1, BSP_DELAY_SECS);
-				LED_Sens_tx = LED_OFF;
+			LED(0,0,0,0,0);
 			printf("Read sensor\n");
 	    	while (1){
-				LED_Sens_rx = LED_ON;
+				LED(0,0,0,0,1);                            //sensor RX
 				sensorRead(0);
 				if(*(psensorData + 2) == 0x08){
 					printf("\nGot it!\n");
@@ -143,7 +160,7 @@ void main(void){
 					//printf("NULL_COUNTER = %d\n",NULL_COUNTER); //Time wait for sensor
 				}
 			}
-			LED_Sens_rx = LED_OFF;
+			LED(0,0,0,0,0);
 			
 			printf("PH: %d(0x%04X)\n", mergePH, mergePH);
 			printf("DO: %d(0x%04X)\n", mergeDO, mergeDO);
@@ -171,11 +188,12 @@ void main(void){
 		}
     
 		printf("LoRa send ptLoc = %d\n",POINT_LOC);
-			LED_LoRa_tx = LED_ON;
+		LED(0,1,0,0,0);                          //LoRa TX
 		rtnSend = R_SCI_Send(g_my_sci_handle_ch1,sendCMD,40);
 		R_BSP_SoftwareDelay (1, BSP_DELAY_SECS);
-			LED_LoRa_tx = LED_OFF;
-			LED_LoRa_rx = LED_ON;
+		LED(0,0,0,0,0);
+		LED(0,0,1,0,0);                          //LoRa RX
+		R_BSP_SoftwareDelay (200, BSP_DELAY_MILLISECS);
 		LORA_Recieve(rtnSend);
 	
 	if(POINT_LOC >= TOTAL_POINT){
@@ -185,7 +203,7 @@ void main(void){
 		POINT_LOC++;
 	}	
 		printf("GLOBALCOUNTER = %d\n", ++GLOBALCOUNTER);
-			LED_LoRa_rx = LED_OFF;
+		LED(0,0,0,0,0);
 	}
 }
 

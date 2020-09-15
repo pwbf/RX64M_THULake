@@ -1,9 +1,9 @@
-Renesas Optimizing Linker (W3.02.00 )             14-Sep-2020 10:55:19
+Renesas Optimizing Linker (W3.02.00 )             14-Sep-2020 16:58:11
 
 *** Options ***
 
 -MAKEUD=thu_rx64m_rsk.lk.ud
--subcommand=D:\RX64M\LAB\THULake\THULakeLoop_REDO2\HardwareDebug\thu_rx64m_rsk.clnk
+-subcommand=C:\Users\User\Desktop\RX64M_THULake-master\RX64M_THULake-master\HardwareDebug\thu_rx64m_rsk.clnk
 -library=thu_rx64m_rsk.lib
 -input=HardwareDebug\dbsct.obj
 -input=HardwareDebug\hwsetup.obj
@@ -94,7 +94,7 @@ W_2
 L
                                   ffc00f4c  ffc01154       209   4
 P
-                                  ffc01155  ffc05bd9      4a85   1
+                                  ffc01155  ffc05d3d      4be9   1
 EXCEPTVECT
                                   ffffff80  fffffffb        7c   4
 RESETVECT
