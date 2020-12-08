@@ -13,7 +13,7 @@ THU THULake
 >> ## v2.patch201207A
 >> #### Fixed: Switching to new sensor not working properly(Overflow)  
 >> #### Added: Mode switch  
->>> ```cpp  
+```cpp  
 //src/main_self.h
 #define MODE_SEA_WATER (0)
 // 0 for normal water, 1 for sea water
