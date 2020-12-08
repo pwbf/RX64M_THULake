@@ -151,7 +151,11 @@ void main(void){
 			printf("TEMP: %d(0x%04X)\n", mergeTP, mergeTP);
 			
 			printf("Pack command for LoRa\n");
+		#if MODE_SEA_WATER==0
 			sprintf(sendCMD,"mac tx ucnf 2 %02d%02d%02d%02d%02d%01d%03d%02d%02d",
+		#else
+			sprintf(sendCMD,"mac tx ucnf 2 %02d%02d%02d%02d%02d%02d%02d%02d%02d",
+		#endif
 				POINT_LOC,
 				finalData_phF, finalData_phS,
 				finalData_doF, finalData_doS,
