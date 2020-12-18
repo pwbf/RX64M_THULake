@@ -65,6 +65,9 @@ static sci_hdl_t   g_my_sci_handle_ch2;		//For Sensor
 #define LED_ON          (0)
 #define LED_OFF         (1)
 
+#define DEBUG_MODE	(0)
+#define MODE_SEA_WATER	(1) // 0 for normal water, 1 for sea water
+
 #define mergePH			(*(psensorData + 3)<<8 | *(psensorData + 4))		//High byte + Low bytes > pH
 #define mergeDO			(*(psensorData + 5)<<8 | *(psensorData + 6))		//High byte + Low bytes > Do
 #define mergeCO			(*(psensorData + 7)<<8 | *(psensorData + 8))		//High byte + Low bytes > Co
@@ -74,10 +77,13 @@ static sci_hdl_t   g_my_sci_handle_ch2;		//For Sensor
 #define finalData_phS	(*(pclacData+1) = mergePH % 100	)
 #define finalData_doF	(*(pclacData+2) = mergeDO / 100	)
 #define finalData_doS	(*(pclacData+3) = mergeDO % 100	)
-#define finalData_coF	(*(pclacData+4) = mergeCO / 1000	)
-#define finalData_coS	(*(pclacData+5) = mergeCO % 1000	)
+#define finalData_coF	(*(pclacData+4) = mergeCO / 1000)
+
+#if MODE_SEA_WATER==0
+#define finalData_coS	(*(pclacData+5) = mergeCO % 1000)
+#else
+#define finalData_coS	(*(pclacData+5) = (mergeCO % 1000)/10)
+#endif
+
 #define finalData_tpF	(*(pclacData+6) = mergeTP / 100	)
 #define finalData_tpS	(*(pclacData+7) = mergeTP % 100	)
-
-#define DEBUG_MODE	(0)
-#define MODE_SEA_WATER	(0) // 0 for normal water, 1 for sea water

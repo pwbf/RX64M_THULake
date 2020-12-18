@@ -162,9 +162,8 @@ void main(void){
 				finalData_coF, finalData_coS,
 				finalData_tpF, finalData_tpS);
 				
-			printf("Reset flag\n");	
+			printf("Reset flag\n\n");	
 			*(psensorData + 2) = 0x00;
-			
 			/*printf("Flush buffer\n");
 			for(LOCAL_LOOP=0; LOCAL_LOOP < RTN_LENGTH; LOCAL_LOOP++)
 				sensorData[LOCAL_LOOP] = 0x00;
@@ -174,7 +173,7 @@ void main(void){
 				LED_work = LED_OFF;
 		}
     
-		printf("LoRa send ptLoc = %d\n",POINT_LOC);
+		printf("LoRa send ptLoc = %d\n\n",POINT_LOC);
 			LED_LoRa_tx = LED_ON;
 		rtnSend = R_SCI_Send(g_my_sci_handle_ch1,sendCMD,40);
 		R_BSP_SoftwareDelay (1, BSP_DELAY_SECS);
@@ -188,7 +187,7 @@ void main(void){
 	else{
 		POINT_LOC++;
 	}	
-		printf("GLOBALCOUNTER = %d\n", ++GLOBALCOUNTER);
+		printf("GLOBALCOUNTER = %d\n\n", ++GLOBALCOUNTER);
 			LED_LoRa_rx = LED_OFF;
 	}
 }

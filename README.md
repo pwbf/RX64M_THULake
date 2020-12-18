@@ -10,6 +10,8 @@ THU THULake
   
 # Update Log>>  
 > # Version 2
+>> ## v2.patch201218A
+>> #### Fixed: Water Temp floating 
 >> ## v2.patch201207A
 >> #### Fixed: Switching to new sensor not working properly(Overflow)  
 >> #### Added: Mode switch  
